@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 1,
+  "id": "lvl_0001",
+  "name": "Glower Tower",
+  "towerHeight": 48,
+  "circumferenceSteps": 24,
+  "start": { "x": 0.5, "y": 0.5 },
+  "stairs": [
+    { "id": "step-00", "x": 0, "topY": 0 },
+    { "id": "step-01", "x": 1, "topY": 1 },
+    { "id": "step-02", "x": 2, "topY": 2 },
+    { "id": "step-03", "x": 3, "topY": 3 },
+    { "id": "step-04", "x": 4, "topY": 4 },
+    { "id": "step-05", "x": 5, "topY": 5 },
+    { "id": "step-06", "x": 6, "topY": 6 },
+    { "id": "step-07", "x": 7, "topY": 7 },
+    { "id": "step-08", "x": 8, "topY": 8 },
+    
+    { "id": "step-11", "x": 11, "topY": 11 },
+    { "id": "step-12", "x": 12, "topY": 12 },
+    { "id": "step-13", "x": 13, "topY": 13 },
+    { "id": "step-14", "x": 14, "topY": 14 },
+    { "id": "step-15", "x": 15, "topY": 15 },
+    { "id": "step-16", "x": 16, "topY": 16 },
+    { "id": "step-17", "x": 17, "topY": 17 },
+    { "id": "step-18", "x": 18, "topY": 18 },
+    { "id": "step-19", "x": 19, "topY": 19 },
+    { "id": "step-20", "x": 20, "topY": 20 },
+    { "id": "step-21", "x": 21, "topY": 21 },
+    { "id": "step-23", "x": 23, "topY": 23 },
+    { "id": "step-24", "x": 0, "topY": 24 },
+    { "id": "step-25", "x": 1, "topY": 25 },
+    { "id": "step-26", "x": 2, "topY": 26 },
+    { "id": "step-27", "x": 3, "topY": 27 },
+    { "id": "step-28", "x": 4, "topY": 28 },
+    { "id": "step-29", "x": 5, "topY": 29 },
+    { "id": "step-30", "x": 6, "topY": 30 },
+    { "id": "step-31", "x": 7, "topY": 31 },
+    { "id": "step-32", "x": 8, "topY": 32 },
+    { "id": "step-33", "x": 9, "topY": 33 },
+    { "id": "step-34", "x": 10, "topY": 34 },
+    { "id": "step-35", "x": 11, "topY": 35 },
+    { "id": "step-36", "x": 12, "topY": 36 },
+    { "id": "step-37", "x": 13, "topY": 37 },
+    { "id": "step-38", "x": 14, "topY": 38 },
+    { "id": "step-39", "x": 15, "topY": 39 },
+    { "id": "step-40", "x": 16, "topY": 40 },
+    { "id": "step-41", "x": 17, "topY": 41 },
+    { "id": "step-42", "x": 18, "topY": 42 },
+    { "id": "step-43", "x": 19, "topY": 43 },
+    { "id": "step-44", "x": 20, "topY": 44 },
+    { "id": "step-45", "x": 21, "topY": 45 },
+    { "id": "step-46", "x": 22, "topY": 46 },
+    { "id": "step-47", "x": 23, "topY": 47 },
+    { "id": "step-48", "x": 22, "topY": 48 },
+    { "id": "balcony-12", "x": 4, "topY": 12.3, "count": 5 },
+    { "id": "balcony-24", "x": 10, "topY": 24.3, "count": 5 },
+    { "id": "balcony-36", "x": 16, "topY": 36.3, "count": 5 },
+    { "id": "side-06", "x": 18, "topY": 6.5, "count": 2 },
+    { "id": "side-18", "x": 2, "topY": 18.5, "count": 2 },
+    { "id": "side-30", "x": 8, "topY": 30.5, "count": 2 },
+    { "id": "side-42", "x": 14, "topY": 42.5, "count": 2 }
+  ],
+  "elevators": [
+    { "id": "elevator-01", "x": 6, "width": 1.2, "yMin": 8, "yMax": 16.8, "speed": 0.68, "phase": 0 },
+    { "id": "elevator-02", "x": 13, "width": 1.2, "yMin": 20, "yMax": 31, "speed": 0.58, "phase": 1.2566 },
+    { "id": "elevator-03", "x": 20, "width": 1.2, "yMin": 32.5, "yMax": 44.5, "speed": 0.52, "phase": 2.5132 },
+    { "id": "elevator-side", "x": 1, "width": 1, "yMin": 14, "yMax": 22, "speed": 0.75, "phase": 3.7699 }
+  ],
+  "gems": [
+    { "id": "gem-01", "x": 2.5, "y": 2.8 }, { "id": "gem-02", "x": 5.5, "y": 5.8 },
+    { "id": "gem-03", "x": 9.5, "y": 10.2 }, { "id": "gem-04", "x": 12.5, "y": 14.5 },
+    { "id": "gem-05", "x": 15.5, "y": 17.5 }, { "id": "gem-06", "x": 18.5, "y": 21 },
+    { "id": "gem-07", "x": 21.5, "y": 25.5 }, { "id": "gem-08", "x": 3.5, "y": 29 },
+    { "id": "gem-09", "x": 7.5, "y": 33.5 }, { "id": "gem-10", "x": 11.5, "y": 38 },
+    { "id": "gem-11", "x": 17.5, "y": 42 }, { "id": "gem-12", "x": 20.5, "y": 45.5 },
+    { "id": "gem-13", "x": 5.5, "y": 13.5 }, { "id": "gem-14", "x": 11.5, "y": 25.5 },
+    { "id": "gem-15", "x": 17.5, "y": 37.5 }, { "id": "gem-16", "x": 23.5, "y": 49.5}
+  ],
+  "springs": [
+    { "id": "spring-08", "x": 8, "topY": 8, "bounceForce": 18.5 },
+    { "id": "spring-20", "x": 20, "topY": 20, "bounceForce": 18.5 },
+    { "id": "spring-32", "x": 8, "topY": 32, "bounceForce": 18.5 }
+  ],
+  "enemies": [
+    { "id": "enemy-patrol-01", "xCenter": 5.5, "y": 13, "behavior": "patrol", "amplitude": 2, "speed": 1.2 },
+    { "id": "enemy-patrol-02", "xCenter": 11.5, "y": 25, "behavior": "patrol", "amplitude": 2.2, "speed": 1.5 },
+    { "id": "enemy-patrol-03", "xCenter": 17.5, "y": 37, "behavior": "patrol", "amplitude": 2.5, "speed": 1.8 },
+    { "id": "enemy-bounce-01", "xCenter": 8, "y": 12.3, "behavior": "bounce", "moveSteps": 0, "speed": 1 },
+    { "id": "enemy-bounce-02", "xCenter": 14, "y": 24.3, "behavior": "bounce", "moveSteps": 0, "speed": 1 },
+    { "id": "enemy-bounce-03", "xCenter": 20, "y": 36.3, "behavior": "bounce", "moveSteps": 0, "speed": 1 }
+  ],
+  "checkpoints": [
+    { "id": 1, "name": "Taras Niebianski", "floor": 12, "x": 5, "y": 12.3 },
+    { "id": 2, "name": "Runiczna Polka", "floor": 24, "x": 11, "y": 24.3 },
+    { "id": 3, "name": "Podniebny Most", "floor": 36, "x": 17, "y": 36.3 }
+  ],
+  "collapsingStairs": [
+    { "id": "cs-01", "x": 10, "topY": 10 },
+    { "id": "cs-02", "x": 22, "topY": 22 }
+  ],
+  "levers": [
+    { "id": "lever-01", "x": 7, "topY": 7.0 }
+  ],
+  "togglableStairs": [
+    { "id": "ts-01", "x": 9, "topY": 9.0, "leverId": "lever-01" }
+  ],
+  "doors": [
+    { "id": "door-azure-low", "pairId": "azure", "x": 3.1, "topY": 18.5 },
+    { "id": "door-azure-high", "pairId": "azure", "x": 15.1, "topY": 42.5 },
+    { "id": "door-amber-low", "pairId": "amber", "x": 5.2, "topY": 12.3 },
+    { "id": "door-amber-high", "pairId": "amber", "x": 17.2, "topY": 36.3 }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "id": "lvl_0002",
+  "name": "Grecka Przystan",
+  "towerHeight": 48,
+  "circumferenceSteps": 24,
+  "start": { "x": 0.5, "y": 0.5 },
+  "stairs": [
+    { "id": "start-ledge",  "x": 0,  "topY": 0,    "count": 3 },
+    { "id": "stair-low-01", "x": 3,  "topY": 1.5 },
+    { "id": "stair-low-02", "x": 4,  "topY": 3.0 },
+    { "id": "island-01",    "x": 6,  "topY": 4.5,  "count": 4 },
+    { "id": "br-a1",        "x": 10, "topY": 5.5 },
+    { "id": "br-a2",        "x": 11, "topY": 7.0 },
+    { "id": "br-a3",        "x": 13, "topY": 8.5,  "count": 2 },
+    { "id": "br-a4",        "x": 14, "topY": 10.0 },
+    { "id": "br-b1",        "x": 15, "topY": 11.5 },
+    { "id": "br-b2",        "x": 16, "topY": 13.0 },
+    { "id": "br-b3",        "x": 17, "topY": 14.5 },
+    { "id": "stair-mid-01", "x": 18, "topY": 16.0, "count": 2 },
+    { "id": "br-c2",        "x": 20, "topY": 18.5 },
+    { "id": "br-c3",        "x": 21, "topY": 20.0 },
+    { "id": "stair-mid-02", "x": 22, "topY": 21.0, "count": 3 },
+    { "id": "br-d1",        "x": 0,  "topY": 22.0 },
+    { "id": "br-d2",        "x": 1,  "topY": 23.5 },
+    { "id": "br-d3",        "x": 3,  "topY": 25.0 },
+    { "id": "br-d4",        "x": 5,  "topY": 26.5 },
+    { "id": "island-02",    "x": 7,  "topY": 28.0, "count": 4 },
+    { "id": "br-e1",        "x": 11, "topY": 29.0 },
+    { "id": "stair-high-01","x": 12, "topY": 30.5 },
+    
+    { "id": "br-e4",        "x": 15, "topY": 35.0 },
+    { "id": "br-f1",        "x": 16, "topY": 36.0 },
+    { "id": "br-f2",        "x": 17, "topY": 37.5 },
+    { "id": "br-f3",        "x": 18, "topY": 39.0 },
+    { "id": "br-f4",        "x": 20, "topY": 40.5 },
+    { "id": "island-03",    "x": 22, "topY": 41.5, "count": 4 },
+    { "id": "br-g1",        "x": 1,  "topY": 43.0 },
+    { "id": "br-g2",        "x": 2,  "topY": 44.5 },
+    { "id": "br-g3",        "x": 4,  "topY": 46.0 },
+    { "id": "br-g4",        "x": 6,  "topY": 47.0 },
+    { "id": "summit-stair", "x": 8,  "topY": 48.0, "count": 3 }
+  ],
+  "elevators": [
+    { "id": "elevator-01", "x": 13, "width": 1.2, "yMin": 4.5,  "yMax": 15.0, "speed": 0.65, "phase": 0 },
+    { "id": "elevator-02", "x": 20, "width": 1.2, "yMin": 15.0, "yMax": 26.5, "speed": 0.58, "phase": 1.5 },
+    { "id": "elevator-03", "x": 7,  "width": 1.2, "yMin": 28.0, "yMax": 40.5, "speed": 0.52, "phase": 3.0 }
+  ],
+  "gems": [
+    { "id": "gem-01", "x": 1.5,  "y": 1.5 },
+    { "id": "gem-02", "x": 4.5,  "y": 3.5 },
+    { "id": "gem-03", "x": 8.5,  "y": 5.8 },
+    { "id": "gem-04", "x": 13.5, "y": 10.5 },
+    { "id": "gem-05", "x": 17.5, "y": 15.0 },
+    { "id": "gem-06", "x": 20.5, "y": 20.0 },
+    { "id": "gem-07", "x": 22.5, "y": 23.0 },
+    { "id": "gem-08", "x": 8.5,  "y": 29.5 },
+    { "id": "gem-09", "x": 14.5, "y": 34.0 },
+    { "id": "gem-10", "x": 17.5, "y": 38.5 },
+    { "id": "gem-11", "x": 23.5, "y": 43.5 },
+    { "id": "gem-12", "x": 1.5,  "y": 43.8}
+  ],
+  "springs": [
+    { "id": "spring-low",  "x": 7,  "topY": 4.5,  "bounceForce": 18.5 },
+    { "id": "spring-high", "x": 23, "topY": 41.5, "bounceForce": 18.5 }
+  ],
+  "enemies": [
+    { "id": "enemy-patrol-01", "xCenter": 8.5,  "y": 4.5,  "behavior": "patrol", "amplitude": 1.5, "speed": 1.1 },
+    { "id": "enemy-patrol-02", "xCenter": 1.5,  "y": 22.0, "behavior": "patrol", "amplitude": 1.0, "speed": 1.3 },
+    { "id": "enemy-bounce-01", "xCenter": 8,    "y": 28.0, "behavior": "bounce", "moveSteps": 0, "speed": 1.0 },
+    { "id": "enemy-bounce-02", "xCenter": 23,   "y": 41.5, "behavior": "bounce", "moveSteps": 0, "speed": 1.0 }
+  ],
+  "checkpoints": [
+    { "id": 1, "name": "Runiczna Polka",  "floor": 16, "x": 18, "y": 16.0 },
+    { "id": 2, "name": "Podniebny Most",  "floor": 28, "x": 8,  "y": 28.0 }
+  ],
+  "collapsingStairs": [
+    { "id": "cs-01", "x": 19, "topY": 17.0 },
+    { "id": "cs-02", "x": 14, "topY": 33.5 }
+  ],
+  "levers": [
+    { "id": "lever-01", "x": 7, "topY": 28.0 }
+  ],
+  "togglableStairs": [
+    { "id": "ts-01", "x": 13, "topY": 32.0, "leverId": "lever-01" }
+  ],
+  "doors": [
+    { "id": "door-cyan-low",   "pairId": "cyan",   "x": 7.5,  "topY": 4.5 },
+    { "id": "door-cyan-high",  "pairId": "cyan",   "x": 18.5, "topY": 16.0 },
+    { "id": "door-orange-low", "pairId": "orange", "x": 0.5,  "topY": 22.0 },
+    { "id": "door-orange-high","pairId": "orange", "x": 8.5,  "topY": 28.0 }
+  ]
+}
