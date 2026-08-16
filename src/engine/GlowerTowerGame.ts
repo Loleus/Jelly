@@ -32,6 +32,7 @@ import {
   createCollapsingStairMaterial,
   createTogglableStairMaterial,
   createDoorFrameMaterial,
+  createDoorMaterial
 } from "../gameTextures";
 import { soundEngine } from "../soundEngine";
 
@@ -56,10 +57,10 @@ export interface ResolutionProfile {
  * ekranu — zawsze w jednej z poniższych, a CSS tylko ją skaluje z zachowaniem proporcji.
  */
 export const RESOLUTION_PROFILES: Record<string, ResolutionProfile> = {
-  desktop: { id: "desktop", label: "640×360 · 16:9", width: 640, height: 360 },
+  desktop: { id: "desktop", label: "640×480 · 16:9", width: 640, height: 480 },
   tabletPortrait: { id: "tabletPortrait", label: "480×640 · 3:4", width: 480, height: 640 },
   phonePortrait: { id: "phonePortrait", label: "400×660 · 10:16", width: 400, height: 660 },
-  phoneLandscape: { id: "phoneLandscape", label: "640×360 · 16:9", width: 640, height: 360 },
+  phoneLandscape: { id: "phoneLandscape", label: "640×480 · 16:9", width: 640, height: 480 },
 };
 
 /** Dobiera natywną rozdzielczość na podstawie rozmiaru okna przeglądarki. */
@@ -303,7 +304,7 @@ export class GlowerTowerGame {
     this.scene = new THREE.Scene();
     this.scene.background = null;
     // Mgła biała
-    this.scene.fog = new THREE.Fog("#ffffff", 150, 700);
+    this.scene.fog = new THREE.FogExp2(0xcccccc, 0.00025);
 
     this.camera = new THREE.PerspectiveCamera(BASE_VERTICAL_FOV, ASPECT_RATIO, 0.1, 20000);
     this.camera.position.set(0, 5, 14);
@@ -332,7 +333,7 @@ export class GlowerTowerGame {
     this.applyCanvasFilter();
     this.host.appendChild(canvas);
 
-    this.hemiLight = new THREE.HemisphereLight("#bff1ff", "#34697b", 0.66);
+    this.hemiLight = new THREE.HemisphereLight("#fffddb", "#34697b", 0.66);
     this.scene.add(this.hemiLight);
 
     this.sunLight = new THREE.DirectionalLight("#ffe999", 1.9);
@@ -394,7 +395,7 @@ export class GlowerTowerGame {
     // Bardziej zachodowe słońce: ciepły czerwony horyzont po jednej stronie,
     // chłodny szaroniebieski / błękit po przeciwnej stronie.
     // Elevation 45° – cienie pod kątem 45 stopni
-    const elevation = 45;
+    const elevation = 40;
     const azimuth = 220;
 
     const phi = THREE.MathUtils.degToRad(90 - elevation);
@@ -417,21 +418,21 @@ export class GlowerTowerGame {
     }
 
     if (skyUniforms["exposure"] !== undefined) {
-      skyUniforms["exposure"].value = 0.28;
+      skyUniforms["exposure"].value = 0.028;
     }
 
     // Synchronizuję pozycję sunLight z tym samym elevation/azimuth
     const sunDistance = 55;
     this.sunLight.position.copy(this.sun).multiplyScalar(sunDistance);
-    
+
     this.sunLight.target.position.set(0, 5, 0);
     this.scene.add(this.sunLight.target);
     this.sunLight.shadow.camera.lookAt(this.sunLight.target.position);
     this.sunLight.shadow.camera.updateProjectionMatrix();
     this.sunLight.shadow.needsUpdate = true;
-    (this.sunLight as any).color = new THREE.Color("#ffc499");
+    (this.sunLight as any).color = new THREE.Color("#ffe999");
 
-    this.hemiLight.color = new THREE.Color("#b0d0f0");
+    this.hemiLight.color = new THREE.Color("#fffddb");
     this.hemiLight.groundColor = new THREE.Color("#405080");
 
     // PMREM for reflections – opcjonalnie, żeby nie psuło nieba gdy renderer niegotowy
@@ -468,9 +469,9 @@ export class GlowerTowerGame {
       textureHeight: 512,
       waterNormals: waterNormals,
       sunDirection: this.sun.clone().normalize(),
-      sunColor: 0x6b5d47,
-      waterColor: 0x1a2d3a,
-      distortionScale: 1.0,
+      sunColor: 0x543809,
+      waterColor: 0x7F7F7F,
+      distortionScale: 0.8,
       fog: this.scene.fog !== undefined,
     });
 
@@ -565,7 +566,7 @@ export class GlowerTowerGame {
 
     // 4. Summit Golden Ring & Beacon.
     this.topRing = new THREE.Mesh(
-      new THREE.TorusGeometry(TOWER_RADIUS + 1.8, 0.25, 14, 64),
+      new THREE.TorusGeometry(TOWER_RADIUS - 0.5, 0.25, 14, 64),
       new THREE.MeshStandardMaterial({
         color: "#fbbf24",
         emissive: "#d97706",
@@ -866,8 +867,8 @@ export class GlowerTowerGame {
     const gemMat = new THREE.MeshStandardMaterial({
       color: "#f59e0b",
       emissive: "#d97706",
-      emissiveIntensity: 0.9,
-      roughness: 0.1,
+      emissiveIntensity: 0.6,
+      roughness: 0.6,
       metalness: 0.9,
     });
 
@@ -927,11 +928,96 @@ export class GlowerTowerGame {
     return stairCenterX(fromSlot);
   }
 
-  private buildHazards() {
+  // private buildHazards() {
+  //   const hazardSpecs = this.level.enemies;
+
+  //   // Piłka z teksturą schodka przetworzoną na kolor czerwony
+  //   const redStairMat = createEnemyMaterial();
+  //   const orbGeo = new THREE.SphereGeometry(0.32, 14, 14);
+
+  //   const playerJumpHeight = (JUMP_SPEED * JUMP_SPEED) / (2 * GRAVITY);
+  //   const defaultBallBounceHeight = playerJumpHeight * 0.5;
+
+  //   hazardSpecs.forEach((spec) => {
+  //     const behavior = spec.behavior ?? "bounce";
+  //     const amplitude = spec.amplitude ?? defaultBallBounceHeight;
+  //     const speed = spec.speed ?? 1.2;
+
+  //     const slot = stairIndexAt(spec.xCenter);
+
+  //     // Schodek dla przeciwnika — ten sam slot i podana wysokość.
+  //     let baseY = spec.y;
+  //     for (const plat of this.staticStairs) {
+  //       if (
+  //         stairIndexAt(plat.x) === slot &&
+  //         Math.abs(plat.topY - spec.y) < 0.75
+  //       ) {
+  //         baseY = plat.topY;
+  //         break;
+  //       }
+  //     }
+
+  //     const enemyX = stairCenterX(slot);
+  //     const moveSteps = Math.max(0, Math.floor(spec.moveSteps ?? 0));
+  //     const direction: -1 | 1 = spec.direction === -1 ? -1 : 1;
+  //     const naturalFlightTime = 2 * Math.sqrt((2 * amplitude) / GRAVITY);
+  //     const bounceDuration = naturalFlightTime / Math.max(0.25, speed);
+  //     const targetX = this.findEnemyLandingX(enemyX, baseY, moveSteps, direction);
+
+  //     const mesh = new THREE.Mesh(orbGeo, redStairMat);
+  //     mesh.castShadow = true;
+  //     this.scene.add(mesh);
+
+  //     this.hazards.push({
+  //       id: spec.id,
+  //       x: enemyX,
+  //       y: spec.y,
+  //       behavior,
+  //       amplitude,
+  //       speed,
+  //       currentX: enemyX,
+  //       bounceElapsed: 0,
+  //       bounceDuration,
+  //       bounceBaseY: baseY,
+  //       bounceFromX: enemyX,
+  //       bounceToX: targetX,
+  //       moveSteps,
+  //       direction,
+  //       mesh,
+  //       theta: stepToTheta(enemyX),
+  //     });
+  //   });
+  // }
+
+  private buildHazards() {  
     const hazardSpecs = this.level.enemies;
 
-    // Piłka z teksturą schodka przetworzoną na kolor czerwony
-    const redStairMat = createEnemyMaterial();
+    // Materiał z teksturą (z createEnemyMaterial)
+    const enemyMat = createEnemyMaterial();
+
+    // Wymuś poprawne mapowanie tekstury na sferze — nie zmieniamy materiału poza mapami
+    if (enemyMat.map) {
+      enemyMat.map.wrapS = THREE.RepeatWrapping;
+      enemyMat.map.wrapT = THREE.RepeatWrapping;
+      enemyMat.map.repeat.set(0.6, 0.6);        // jedna kopia tekstury w poziomie i pionie
+      enemyMat.map.offset.set(0, 0);        // wyśrodkowanie/offset
+      enemyMat.map.center.set(0.5, 0.5);    // środek obrotu/skalowania
+      enemyMat.map.rotation = 0;            // brak rotacji
+      enemyMat.map.flipY = false;
+      enemyMat.map.needsUpdate = true;
+    }
+
+    if (enemyMat.normalMap) {
+      enemyMat.normalMap.wrapS = THREE.RepeatWrapping;
+      enemyMat.normalMap.wrapT = THREE.RepeatWrapping;
+      enemyMat.normalMap.repeat.set(0.6, 0.6);
+      enemyMat.normalMap.offset.set(0, 0);
+      enemyMat.normalMap.center.set(0.5, 0.5);
+      enemyMat.normalMap.rotation = 0;
+      enemyMat.normalMap.flipY = false;
+      enemyMat.normalMap.needsUpdate = true;
+    }
+
     const orbGeo = new THREE.SphereGeometry(0.32, 14, 14);
 
     const playerJumpHeight = (JUMP_SPEED * JUMP_SPEED) / (2 * GRAVITY);
@@ -944,7 +1030,7 @@ export class GlowerTowerGame {
 
       const slot = stairIndexAt(spec.xCenter);
 
-      // Schodek dla przeciwnika — ten sam slot i podana wysokość.
+      // Dopasuj bazowe Y do istniejącej platformy, jeśli pasuje
       let baseY = spec.y;
       for (const plat of this.staticStairs) {
         if (
@@ -963,8 +1049,17 @@ export class GlowerTowerGame {
       const bounceDuration = naturalFlightTime / Math.max(0.25, speed);
       const targetX = this.findEnemyLandingX(enemyX, baseY, moveSteps, direction);
 
-      const mesh = new THREE.Mesh(orbGeo, redStairMat);
+      // Tworzymy mesh z materiałem zawierającym tylko teksturę
+      const mesh = new THREE.Mesh(orbGeo, enemyMat);
       mesh.castShadow = true;
+      mesh.receiveShadow = true;
+
+      mesh.userData.spinAxis = new THREE.Vector3(0, 0, 1);
+
+      // Prędkość obrotu: bazowa wartość zależna od prędkości hazardu.
+      // Możesz dostroić mnożnik (0.8) żeby dopasować wizualnie do istniejącej piłki podskakującej.
+      mesh.userData.spinSpeed = (speed ?? 1.2) * 0.8;
+
       this.scene.add(mesh);
 
       this.hazards.push({
@@ -1014,13 +1109,13 @@ export class GlowerTowerGame {
       this.levers.push({ id: spec.id, x: spec.x, topY: spec.topY, theta: theta, mesh: group, extended: false });
     });
 
-this.level.togglableStairs.forEach((spec) => {
+    this.level.togglableStairs.forEach((spec) => {
       const theta = stepToTheta(stairCenterX(stairIndexAt(spec.x)));
       const radial = new THREE.Vector3(Math.sin(theta), 0, Math.cos(theta));
       const sAL = (TAU * TOWER_RADIUS) / CIRCUMFERENCE_STEPS;
       const group = new THREE.Group();
       const geo = new THREE.BoxGeometry(sAL * 1.02, PLATFORM_THICKNESS, PLATFORM_DEPTH);
-      const mat = createTogglableStairMaterial(false);
+      const mat = createTogglableStairMaterial();
       const mesh = new THREE.Mesh(geo, mat);
       mesh.castShadow = true; mesh.receiveShadow = true;
       group.add(mesh);
@@ -1064,7 +1159,7 @@ this.level.togglableStairs.forEach((spec) => {
     });
   }
 
-private buildCheckpoints() {
+  private buildCheckpoints() {
     const cpData = this.level.checkpoints;
 
     cpData.forEach((cp) => {
@@ -1131,16 +1226,18 @@ private buildCheckpoints() {
       const group = new THREE.Group();
 
       const stoneMaterial = createDoorFrameMaterial();
-      const doorMaterial = new THREE.MeshStandardMaterial({
-        color,
-        emissive: color,
-        emissiveIntensity: 0.12,
-        roughness: 0.35,
-        metalness: 0.55,
-      });
+      const doorMaterial = createDoorMaterial();
+      // const doorMaterial = new THREE.MeshStandardMaterial({
+      //   color,
+      //   emissive: color,
+      //   emissiveIntensity: 0.12,
+      //   roughness: 0.35,
+      //   metalness: 0.55,
+      // });
 
-      const panel = new THREE.Mesh(new THREE.BoxGeometry(0.85, 1.8, 0.16), doorMaterial);
+      const panel = new THREE.Mesh(new THREE.BoxGeometry(0.85, 2.0, 0.16), doorMaterial);
       panel.position.set(0, 0.95, 0.03);
+
       panel.castShadow = true;
       group.add(panel);
 
@@ -1256,20 +1353,18 @@ private buildCheckpoints() {
     const topDropGeo = new THREE.OctahedronGeometry(0.11, 0);
     topDropGeo.rotateZ(Math.PI / 6);
     const topDropMat = new THREE.MeshStandardMaterial({
-      color: "#6ee7a8",
-      emissive: "#000000",
-      emissiveIntensity: 0.0,
+      color: "#27c10c",
+      emissive: "#37ca0b",
+      emissiveIntensity: 0.5,
       metalness: 1.0,
-      roughness: 0.02,
+      roughness: 0.8,
     });
     const topDrop = new THREE.Mesh(topDropGeo, topDropMat);
     // Podniesiony o 0.15 jednostki — widoczna przerwa pomiedzy glową a diamencikiem
-    topDrop.position.y = FOOT_LOCAL_Y + 2.23;
+    topDrop.position.y = FOOT_LOCAL_Y + 2.15;
     topDrop.castShadow = true;
     this.playerBody.add(topDrop);
     this.slimeTopDrop = topDrop;
-
-    // Biała plamka usunięta — diamencik sam w sobie odbija otoczenie w 100%.
 
     // FACE — dzieci bryły (torso), więc skalują się RAZEM z oddechem i nigdy nie znikają w środku.
     // Pozycje wypchnięte tuż nad powierzchnię zwężonego body (0.9).
@@ -1479,11 +1574,11 @@ private buildCheckpoints() {
         lev.extended = !lev.extended;
         this.leverCooldown = 0.4;
         soundEngine.playCheckpoint();
-        this.togglableStairs.forEach(function(ts){ if(ts.leverId===lev.id) ts.extended=lev.extended; });
+        this.togglableStairs.forEach(function (ts) { if (ts.leverId === lev.id) ts.extended = lev.extended; });
       }
-      var armGroup = lev.mesh.children.find(function(c){return c.name==="armGroup";}) as unknown as THREE.Group;
-      if(armGroup) (armGroup as any).rotation.x = THREE.MathUtils.lerp((armGroup as any).rotation.x, lev.extended ? -0.2 : -1.0, 0.12);
-      var ball = armGroup ? (armGroup as any).children.find(function(c:any){return c.userData&&c.userData.isBall;}) as unknown as THREE.Mesh : undefined;
+      var armGroup = lev.mesh.children.find(function (c) { return c.name === "armGroup"; }) as unknown as THREE.Group;
+      if (armGroup) (armGroup as any).rotation.x = THREE.MathUtils.lerp((armGroup as any).rotation.x, lev.extended ? -0.2 : -1.0, 0.12);
+      var ball = armGroup ? (armGroup as any).children.find(function (c: any) { return c.userData && c.userData.isBall; }) as unknown as THREE.Mesh : undefined;
       if (ball && ball.material instanceof THREE.MeshStandardMaterial) {
         ball.material.color.set(lev.extended ? "#4ade80" : "#ef4444"); ball.material.emissive.set(lev.extended ? "#14532d" : "#7f1d1d");
       }
@@ -1503,11 +1598,11 @@ private buildCheckpoints() {
       if (tMesh && tMesh instanceof THREE.Mesh && tMesh.material instanceof THREE.MeshStandardMaterial) {
         var isGreen = ts.retractOffset < 0.5;
         tMesh.material.color.set(isGreen ? "#4ade80" : "#ef4444");
-        tMesh.material.emissive.set(isGreen ? "#14532d" : "#7f1d1d");
+        tMesh.material.emissive.set(isGreen ? "#198745f0" : "#831b1bed");
       }
     });
 
-if (this.input.doorQueued) {
+    if (this.input.doorQueued) {
       if (this.doorCooldown <= 0) this.tryUseDoor();
       this.input.doorQueued = false;
     }
@@ -1539,142 +1634,149 @@ if (this.input.doorQueued) {
     });
 
     // Hazards – bouncing / patrolling / static
-    this.hazards.forEach((haz) => {
-      switch (haz.behavior) {
-        case "bounce": {
-          haz.bounceElapsed += dt;
+this.hazards.forEach((haz) => {
+  switch (haz.behavior) {
+    case "bounce": {
+      haz.bounceElapsed += dt;
 
-          // Lądowanie: dopiero tutaj wolno ustalić/zmienić kierunek następnego skoku.
-          if (haz.bounceElapsed >= haz.bounceDuration) {
-            haz.bounceElapsed %= haz.bounceDuration;
-            haz.x = haz.bounceToX;
+      // Lądowanie: dopiero tutaj wolno ustalić/zmienić kierunek następnego skoku.
+      if (haz.bounceElapsed >= haz.bounceDuration) {
+        haz.bounceElapsed %= haz.bounceDuration;
+        haz.x = haz.bounceToX;
 
-            if (haz.moveSteps > 0) {
-              const expectedSlot = stairIndexAt(
-                stairIndexAt(haz.bounceFromX) + haz.direction * haz.moveSteps
-              );
-              if (stairIndexAt(haz.x) !== expectedSlot) {
-                haz.direction = haz.direction === 1 ? -1 : 1;
-              }
-            }
-
-            haz.bounceFromX = haz.x;
-            haz.bounceToX = this.findEnemyLandingX(
-              haz.x,
-              haz.bounceBaseY,
-              haz.moveSteps,
-              haz.direction
-            );
-          }
-
-          const t = THREE.MathUtils.clamp(
-            haz.bounceElapsed / haz.bounceDuration,
-            0,
-            1
+        if (haz.moveSteps > 0) {
+          const expectedSlot = stairIndexAt(
+            stairIndexAt(haz.bounceFromX) + haz.direction * haz.moveSteps
           );
-
-          // Naturalna parabola balistyczna: 0 przy lądowaniu, H w połowie lotu.
-          const bounceY = 4 * haz.amplitude * t * (1 - t);
-
-          // Najkrótsza droga po zawiniętym obwodzie, zawsze środek -> środek.
-          let dx = haz.bounceToX - haz.bounceFromX;
-          if (dx > CIRCUMFERENCE_STEPS * 0.5) dx -= CIRCUMFERENCE_STEPS;
-          if (dx < -CIRCUMFERENCE_STEPS * 0.5) dx += CIRCUMFERENCE_STEPS;
-          haz.currentX = wrapValue(haz.bounceFromX + dx * t, CIRCUMFERENCE_STEPS);
-          haz.theta = stepToTheta(haz.currentX);
-          const ballY = haz.bounceBaseY + 0.32 + bounceY;
-
-          if (haz.mesh) {
-            const rad = new THREE.Vector3(
-              Math.sin(haz.theta),
-              0,
-              Math.cos(haz.theta)
-            );
-            haz.mesh.position.set(
-              rad.x * PLAYER_STAND_RADIUS,
-              ballY,
-              rad.z * PLAYER_STAND_RADIUS
-            );
-            haz.mesh.userData.currentY = ballY;
-            // Obrót gumowej/koszykarskiej piłki podczas lotu.
-            haz.mesh.rotation.x += dt * 5;
-            haz.mesh.rotation.z += dt * 2.5;
+          if (stairIndexAt(haz.x) !== expectedSlot) {
+            haz.direction = haz.direction === 1 ? -1 : 1;
           }
-          break;
         }
-        case "patrol": {
-          const patrolN = Math.sin(timeSec * haz.speed);
-          haz.currentX = wrapValue(
-            haz.x + patrolN * haz.amplitude,
-            CIRCUMFERENCE_STEPS
-          );
-          haz.theta = stepToTheta(haz.currentX);
-          if (haz.mesh) {
-            const rad = new THREE.Vector3(
-              Math.sin(haz.theta),
-              0,
-              Math.cos(haz.theta)
-            );
-            haz.mesh.position.set(
-              rad.x * PLAYER_STAND_RADIUS,
-              haz.bounceBaseY + 0.7,
-              rad.z * PLAYER_STAND_RADIUS
-            );
-            haz.mesh.userData.currentY = haz.bounceBaseY + 0.7;
-          }
-          break;
-        }
-        case "static":
-        default:
-          haz.currentX = haz.x;
-          haz.theta = stepToTheta(haz.x);
-          if (haz.mesh) {
-            const rad = new THREE.Vector3(
-              Math.sin(haz.theta),
-              0,
-              Math.cos(haz.theta)
-            );
-            haz.mesh.position.set(
-              rad.x * PLAYER_STAND_RADIUS,
-              haz.bounceBaseY + 0.7,
-              rad.z * PLAYER_STAND_RADIUS
-            );
-            haz.mesh.userData.currentY = haz.bounceBaseY + 0.7;
-          }
-          break;
+
+        haz.bounceFromX = haz.x;
+        haz.bounceToX = this.findEnemyLandingX(
+          haz.x,
+          haz.bounceBaseY,
+          haz.moveSteps,
+          haz.direction
+        );
       }
 
-      // Kolizja z graczem
-      const hazMesh = haz.mesh;
-      const hazY =
-        hazMesh && (hazMesh.userData as Record<string, number>)?.currentY
-          ? (hazMesh.userData as Record<string, number>).currentY
-          : haz.y;
+      const t = THREE.MathUtils.clamp(
+        haz.bounceElapsed / haz.bounceDuration,
+        0,
+        1
+      );
 
-      if (
-        this.playerState.enemyHitCooldown <= 0 &&
-        hazY + 0.32 >= this.playerState.y - 0.1 &&
-        hazY - 0.32 <= this.playerState.y + 2.4 &&
-        overlapsWrapped(
-          this.playerState.x,
-          PLAYER_HALF_WIDTH * 1.5,
-          haz.currentX,
-          0.4
-        )
-      ) {
-        this.playerState.enemyHitCooldown = 0.8;
+      // Naturalna parabola balistyczna: 0 przy lądowaniu, H w połowie lotu.
+      const bounceY = 4 * haz.amplitude * t * (1 - t);
 
-        // Lekki podskok po uderzeniu. Nie teleportujemy na dół — fizyka
-        // ignoruje tylko bieżący schodek i pozwala wylądować na windzie lub
-        // najbliższym niższym schodku.
-        this.playerState.knockdownFloorY = this.playerState.y;
-        this.playerState.vy = 7.5;
-        this.playerState.grounded = false;
-        this.playerState.rideElevator = -1;
-        this.playerState.jiggleVel -= 8;
-        this.spawnParticles(this.playerGroup.position, 8, 0xfef08a, 2.0);
+      // Najkrótsza droga po zawiniętym obwodzie, zawsze środek -> środek.
+      let dx = haz.bounceToX - haz.bounceFromX;
+      if (dx > CIRCUMFERENCE_STEPS * 0.5) dx -= CIRCUMFERENCE_STEPS;
+      if (dx < -CIRCUMFERENCE_STEPS * 0.5) dx += CIRCUMFERENCE_STEPS;
+      haz.currentX = wrapValue(haz.bounceFromX + dx * t, CIRCUMFERENCE_STEPS);
+      haz.theta = stepToTheta(haz.currentX);
+      const ballY = haz.bounceBaseY + 0.32 + bounceY;
+
+      if (haz.mesh) {
+        const rad = new THREE.Vector3(
+          Math.sin(haz.theta),
+          0,
+          Math.cos(haz.theta)
+        );
+        haz.mesh.position.set(
+          rad.x * PLAYER_STAND_RADIUS,
+          ballY,
+          rad.z * PLAYER_STAND_RADIUS
+        );
+        haz.mesh.userData.currentY = ballY;
+        // Obrót gumowej/koszykarskiej piłki podczas lotu.
+        haz.mesh.rotation.x += dt * 5;
+        haz.mesh.rotation.z += dt * 2.5;
       }
-    });
+      break;
+    }
+    case "patrol": {
+      const patrolN = Math.sin(timeSec * haz.speed);
+      haz.currentX = wrapValue(
+        haz.x + patrolN * haz.amplitude,
+        CIRCUMFERENCE_STEPS
+      );
+      haz.theta = stepToTheta(haz.currentX);
+      if (haz.mesh) {
+        const rad = new THREE.Vector3(
+          Math.sin(haz.theta),
+          0,
+          Math.cos(haz.theta)
+        );
+        haz.mesh.position.set(
+          rad.x * PLAYER_STAND_RADIUS,
+          haz.bounceBaseY + 0.7,
+          rad.z * PLAYER_STAND_RADIUS
+        );
+        haz.mesh.userData.currentY = haz.bounceBaseY + 0.7;
+        // Dodana rotacja taka sama jak w bounce
+        haz.mesh.rotation.x += dt * 5;
+        haz.mesh.rotation.z += dt * 2.5;
+      }
+      break;
+    }
+    case "static":
+    default:
+      haz.currentX = haz.x;
+      haz.theta = stepToTheta(haz.x);
+      if (haz.mesh) {
+        const rad = new THREE.Vector3(
+          Math.sin(haz.theta),
+          0,
+          Math.cos(haz.theta)
+        );
+        haz.mesh.position.set(
+          rad.x * PLAYER_STAND_RADIUS,
+          haz.bounceBaseY + 0.7,
+          rad.z * PLAYER_STAND_RADIUS
+        );
+        haz.mesh.userData.currentY = haz.bounceBaseY + 0.7;
+        // Dodana rotacja taka sama jak w bounce
+        haz.mesh.rotation.x += dt * 5;
+        haz.mesh.rotation.z += dt * 2.5;
+      }
+      break;
+  }
+
+  // Kolizja z graczem
+  const hazMesh = haz.mesh;
+  const hazY =
+    hazMesh && (hazMesh.userData as Record<string, number>)?.currentY
+      ? (hazMesh.userData as Record<string, number>).currentY
+      : haz.y;
+
+  if (
+    this.playerState.enemyHitCooldown <= 0 &&
+    hazY + 0.32 >= this.playerState.y - 0.1 &&
+    hazY - 0.32 <= this.playerState.y + 2.4 &&
+    overlapsWrapped(
+      this.playerState.x,
+      PLAYER_HALF_WIDTH * 1.5,
+      haz.currentX,
+      0.4
+    )
+  ) {
+    this.playerState.enemyHitCooldown = 0.8;
+
+    // Lekki podskok po uderzeniu. Nie teleportujemy na dół — fizyka
+    // ignoruje tylko bieżący schodek i pozwala wylądować na windzie lub
+    // najbliższym niższym schodku.
+    this.playerState.knockdownFloorY = this.playerState.y;
+    this.playerState.vy = 7.5;
+    this.playerState.grounded = false;
+    this.playerState.rideElevator = -1;
+    this.playerState.jiggleVel -= 8;
+    this.spawnParticles(this.playerGroup.position, 8, 0xfef08a, 2.0);
+  }
+});
+
 
     // Springs cooldown
     this.springs.forEach((sp) => {
@@ -1806,7 +1908,7 @@ if (this.input.doorQueued) {
         gem.collected = true;
         this.playerState.gemsCollected++;
         this.playerState.score += 250;
-        this.playerState.crownFlash = 0.2;
+        this.playerState.crownFlash = 0.3;
         soundEngine.playCoin();
 
         if (gem.mesh) {
@@ -1899,8 +2001,8 @@ if (this.input.doorQueued) {
 
     // Summit Victory — requires standing on a stair with topY exactly at towerHeight (48).
     const onTopStep = this.playerState.grounded &&
-                      this.playerState.currentStairTopY !== null &&
-                      this.playerState.currentStairTopY >= this.towerHeight;
+      this.playerState.currentStairTopY !== null &&
+      this.playerState.currentStairTopY >= this.towerHeight;
     if (onTopStep) {
       this.setGameStatus("win");
       this.playerState.score += 2000;
@@ -2038,8 +2140,8 @@ if (this.input.doorQueued) {
     this.togglableStairs.forEach((ts) => {
       if (ts.retractOffset > 0.85) return;
       if ((ignoredFloor === null || ts.topY < ignoredFloor - 0.01) &&
-          wrappedStepDistance(this.playerState.x, ts.x) < 0.6 &&
-          prevY >= ts.topY - 0.45 && nextY <= ts.topY + 0.08 && ts.topY > hitTop) {
+        wrappedStepDistance(this.playerState.x, ts.x) < 0.6 &&
+        prevY >= ts.topY - 0.45 && nextY <= ts.topY + 0.08 && ts.topY > hitTop) {
         hitTop = ts.topY; ride = -1;
       }
     });
@@ -2271,7 +2373,7 @@ if (this.input.doorQueued) {
     // 1. Idle Breathing (Oddech)
     // Soft sinusoidal vertical expansion at 4.5Hz when resting
     const breatheSway = !isMoving && isGrounded ? Math.sin(sec * 4.5) * 0.025 : 0;
-    
+
     // 2. Galareta: squash & stretch ze sprężyny + rozciąganie w locie
     const verticalVel = this.playerState.vy;
     const airStretch = !isGrounded ? THREE.MathUtils.clamp(verticalVel / 40, -0.1, 0.1) : 0;
@@ -2292,8 +2394,7 @@ if (this.input.doorQueued) {
     this.rightFoot.scale.set(footSpread, 1 + squashY * 0.35, footSpread);
 
     // Diamencik na czubku — zielona stal 100% odbijająca, plus złoty rozbłysk 0.2s po diamentach
-    this.slimeTopDrop.position.y =
-      PLAYER_FOOT_OFFSET + 2.08 + this.playerState.jiggle * 0.55 + breatheSway * 1.5;
+    this.slimeTopDrop.position.y = PLAYER_FOOT_OFFSET + 2.15 + this.playerState.jiggle * 0.55 + breatheSway * 1.5;
     this.slimeTopDrop.rotation.y += FIXED_DT * 1.6;
     this.slimeTopDrop.rotation.z = Math.sin(sec * 3.1) * 0.16 - this.playerState.vx * 0.05;
     this.slimeTopDrop.scale.set(1 - squashY * 0.4, 1 + squashY * 0.8, 1 - squashY * 0.4);
@@ -2309,9 +2410,9 @@ if (this.input.doorQueued) {
       const flashScale = 1 + (1 - t) * 0.85;
       this.slimeTopDrop.scale.multiplyScalar(flashScale);
     } else {
-      mat.color.set("#6ee7a8");
-      mat.emissive.set("#064e3b");
-      mat.emissiveIntensity = 0.18;
+      mat.color.set("#48ff00");
+      mat.emissive.set("#37ca0b");
+      mat.emissiveIntensity = 0.5;
     }
 
     // 3. Eye Blinking (Mruganie)
@@ -2403,7 +2504,7 @@ if (this.input.doorQueued) {
     // ==========================================
     // Slower tracking while airborne (0.045) to accentuate jump peaks, faster when grounded (0.09) to settle down.
     const verticalLerpSpeed = isGrounded ? 0.09 : 0.045;
-    
+
     this.playerState.smoothCamY = THREE.MathUtils.lerp(
       this.playerState.smoothCamY,
       this.playerState.y,
@@ -2433,7 +2534,7 @@ if (this.input.doorQueued) {
         Math.cos(this.menuCamAngle) * orbitRadius
       );
       // Patrzy w środek wieży, mniej więcej na połowę jej wysokości
-      cameraLookTarget = new THREE.Vector3(0, this.towerHeight * 0.45, 0);
+      cameraLookTarget = new THREE.Vector3(0, this.towerHeight * 0.5, 0);
       // Snap szybciej w menu, żeby nie „wpłynąć" powoli po restarcie
       this.camera.position.lerp(cameraDesired, 0.06);
     } else {
@@ -2442,8 +2543,8 @@ if (this.input.doorQueued) {
       // 0.9 jednostki podniesienia = ~6-7° poniżej środka kadru = dokładnie 1/3 od dołu przy FOV 38°.
       const verticalLookUp = 0.9;
       cameraDesired = focusPoint.clone()
-        .add(camRadial.multiplyScalar(14.0))
-        .add(new THREE.Vector3(0, 4.5 + verticalLookUp, 0)); // kamera wyżej: 4.5 -> 5.4
+        .add(camRadial.multiplyScalar(18.0))
+        .add(new THREE.Vector3(0, 4 + verticalLookUp, 0)); // kamera wyżej: 4.5 -> 5.4
       cameraLookTarget = focusPoint.clone().add(new THREE.Vector3(0, verticalLookUp, 0)); // punkt patrzenia wyżej
       this.camera.position.lerp(cameraDesired, 0.1);
     }
@@ -2593,6 +2694,7 @@ if (this.input.doorQueued) {
 
     this.renderer.setPixelRatio(1);
     this.renderer.setSize(w, h, false);
+    this.composer.setSize(w, h);
 
     const baseHalfHTan =
       Math.tan(THREE.MathUtils.degToRad(BASE_VERTICAL_FOV) / 2) * ASPECT_RATIO;

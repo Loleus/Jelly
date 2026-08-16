@@ -1,7 +1,38 @@
 import * as THREE from "three";
 
-const wallColorTextureUrl = new URL("./textures/wall/WALL_col.png", import.meta.url).href;
-const wallNormalTextureUrl = new URL("./textures/wall/WALL_nrm.png", import.meta.url).href;
+function configureColorMap(
+  texture: THREE.Texture,
+  opts: {
+    wrapS?: THREE.Wrapping;
+    wrapT?: THREE.Wrapping;
+    repeat?: [number, number];
+    anisotropy?: number;
+  } = {}
+): THREE.Texture {
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.wrapS = opts.wrapS ?? THREE.ClampToEdgeWrapping;
+  texture.wrapT = opts.wrapT ?? THREE.ClampToEdgeWrapping;
+  if (opts.repeat) texture.repeat.set(opts.repeat[0], opts.repeat[1]);
+  if (opts.anisotropy !== undefined) texture.anisotropy = opts.anisotropy;
+  return texture;
+}
+
+function configureNormalMap(
+  texture: THREE.Texture,
+  opts: {
+    wrapS?: THREE.Wrapping;
+    wrapT?: THREE.Wrapping;
+    repeat?: [number, number];
+    anisotropy?: number;
+  } = {}
+): THREE.Texture {
+  texture.colorSpace = THREE.NoColorSpace;
+  texture.wrapS = opts.wrapS ?? THREE.ClampToEdgeWrapping;
+  texture.wrapT = opts.wrapT ?? THREE.ClampToEdgeWrapping;
+  if (opts.repeat) texture.repeat.set(opts.repeat[0], opts.repeat[1]);
+  if (opts.anisotropy !== undefined) texture.anisotropy = opts.anisotropy;
+  return texture;
+}
 
 // High-performance canvas-generated textures with mipmaps and anisotropy
 function createProceduralCanvas(
@@ -17,81 +48,6 @@ function createProceduralCanvas(
     draw(ctx, width, height);
   }
   return canvas;
-}
-
-export function createTowerMaterial(
-  loader?: THREE.TextureLoader,
-  _radius: number = 6.12,
-  _height: number = 52
-): THREE.Material {
-  const textureLoader = loader ?? new THREE.TextureLoader();
-  const texture = textureLoader.load(wallColorTextureUrl);
-  const normalTexture = textureLoader.load(wallNormalTextureUrl);
-
-  const repeatU = 18;
-  const repeatV = Math.max(1, Math.ceil((_height || 52) / 2));
-
-  texture.wrapS = THREE.RepeatWrapping;
-  texture.wrapT = THREE.RepeatWrapping;
-  texture.repeat.set(repeatU, repeatV);
-  texture.colorSpace = THREE.SRGBColorSpace;
-  texture.anisotropy = 18;
-
-  normalTexture.wrapS = THREE.RepeatWrapping;
-  normalTexture.wrapT = THREE.RepeatWrapping;
-  normalTexture.repeat.set(repeatU, repeatV);
-  normalTexture.colorSpace = THREE.NoColorSpace;
-  normalTexture.anisotropy = 18;
-
-  return new THREE.MeshStandardMaterial({
-    map: texture,
-    normalMap: normalTexture,
-    normalScale: new THREE.Vector2(0.85, 0.85),
-    roughness: 1.0,
-    metalness: 0.08,
-    color: "#9aa7b8",
-  });
-}
-
-export function createFloorMaterial(
-  _loader?: THREE.TextureLoader,
-  maxAnisotropy: number = 4
-): THREE.Material {
-  const canvas = createProceduralCanvas(256, 256, (ctx, w, h) => {
-    // Checkerboard plaza cobblestone
-    ctx.fillStyle = "#0c1524";
-    ctx.fillRect(0, 0, w, h);
-
-    const tileSize = w / 4;
-    for (let x = 0; x < 4; x++) {
-      for (let y = 0; y < 4; y++) {
-        if ((x + y) % 2 === 0) {
-          ctx.fillStyle = "#1e293b";
-        } else {
-          ctx.fillStyle = "#111c2e";
-        }
-        ctx.fillRect(x * tileSize + 2, y * tileSize + 2, tileSize - 4, tileSize - 4);
-
-        // Inner border
-        ctx.strokeStyle = "rgba(99, 102, 241, 0.25)";
-        ctx.lineWidth = 1;
-        ctx.strokeRect(x * tileSize + 5, y * tileSize + 5, tileSize - 10, tileSize - 10);
-      }
-    }
-  });
-
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.wrapS = THREE.RepeatWrapping;
-  texture.wrapT = THREE.RepeatWrapping;
-  texture.repeat.set(24, 24);
-  texture.anisotropy = maxAnisotropy;
-
-  return new THREE.MeshStandardMaterial({
-    map: texture,
-    roughness: 0.7,
-    metalness: 0.2,
-    color: "#64748b",
-  });
 }
 
 /** Paleta pojedynczego stopnia — pozwala odbić tę samą teksturę w innym kolorze. */
@@ -110,27 +66,6 @@ interface StepPalette {
   tint: string;
 }
 
-const STONE_STEP_PALETTE: StepPalette = {
-  highlight: "#f59e0b",
-  faceTop: "#334155",
-  faceBottom: "#1e293b",
-  shadow: "#0f172a",
-  rune: "rgba(251, 191, 36, 0.4)",
-  tint: "#e2e8f0",
-};
-
-/**
- * Winda: dokładnie ten sam kamienny stopień co schodki.
- * Różni się wyłącznie krawędzią — zamiast złotej jest niebieska.
- */
-const BLUE_EDGE_STEP_PALETTE: StepPalette = {
-  highlight: "#38bdf8",
-  faceTop: STONE_STEP_PALETTE.faceTop,
-  faceBottom: STONE_STEP_PALETTE.faceBottom,
-  shadow: STONE_STEP_PALETTE.shadow,
-  rune: "rgba(56, 189, 248, 0.4)",
-  tint: STONE_STEP_PALETTE.tint,
-};
 
 function createStepMaterial(palette: StepPalette): THREE.MeshStandardMaterial {
   const canvas = createProceduralCanvas(128, 128, (ctx, w, h) => {
@@ -158,60 +93,13 @@ function createStepMaterial(palette: StepPalette): THREE.MeshStandardMaterial {
     ctx.strokeRect(w * 0.2, h * 0.25, w * 0.6, h * 0.5);
   });
 
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.wrapS = THREE.ClampToEdgeWrapping;
-  texture.wrapT = THREE.ClampToEdgeWrapping;
+  const texture = configureColorMap(new THREE.CanvasTexture(canvas));
 
   return new THREE.MeshStandardMaterial({
     map: texture,
     roughness: 0.5,
     metalness: 0.35,
     color: palette.tint,
-  });
-}
-
-export function createStairsMaterial(loader?: THREE.TextureLoader): THREE.Material {
-  const textureLoader = loader || new THREE.TextureLoader();
-  
-  const stepColorUrl = new URL("./textures/step/step_col.png", import.meta.url).href;
-  const stepNormalUrl = new URL("./textures/step/step_nrm.png", import.meta.url).href;
-  
-  const colorTexture = textureLoader.load(stepColorUrl);
-  const normalTexture = textureLoader.load(stepNormalUrl);
-  
-  // Brak powtórzeń — każdy schodek ma swoją teksturę zmapowaną
-  colorTexture.wrapS = THREE.ClampToEdgeWrapping;
-  colorTexture.wrapT = THREE.ClampToEdgeWrapping;
-  normalTexture.wrapS = THREE.ClampToEdgeWrapping;
-  normalTexture.wrapT = THREE.ClampToEdgeWrapping;
-  
-  return new THREE.MeshStandardMaterial({
-    map: colorTexture,
-    normalMap: normalTexture,
-    roughness: 0.7,
-    metalness: 0.1,
-  });
-}
-
-export function createElevatorMaterial(): THREE.MeshStandardMaterial {
-  const textureLoader = new THREE.TextureLoader();
-  
-  const liftColorUrl = new URL("./textures/lift/lift_col.png", import.meta.url).href;
-  const liftNormalUrl = new URL("./textures/lift/lift_nrm.png", import.meta.url).href;
-  
-  const colorTexture = textureLoader.load(liftColorUrl);
-  const normalTexture = textureLoader.load(liftNormalUrl);
-  
-  colorTexture.wrapS = THREE.ClampToEdgeWrapping;
-  colorTexture.wrapT = THREE.ClampToEdgeWrapping;
-  normalTexture.wrapS = THREE.ClampToEdgeWrapping;
-  normalTexture.wrapT = THREE.ClampToEdgeWrapping;
-  
-  return new THREE.MeshStandardMaterial({
-    map: colorTexture,
-    normalMap: normalTexture,
-    roughness: 0.6,
-    metalness: 0.2,
   });
 }
 
@@ -228,96 +116,176 @@ export function createElevatorRailMaterial(): THREE.MeshStandardMaterial {
   return createStepMaterial(BROWN_RAIL_PALETTE);
 }
 
-const RED_ENEMY_PALETTE: StepPalette = {
-  highlight: "#ef4444",
-  faceTop: STONE_STEP_PALETTE.faceTop,
-  faceBottom: STONE_STEP_PALETTE.faceBottom,
-  shadow: STONE_STEP_PALETTE.shadow,
-  rune: "rgba(239, 68, 68, 0.4)",
-  tint: STONE_STEP_PALETTE.tint,
-};
-
-export function createEnemyMaterial(): THREE.MeshStandardMaterial {
-  return createStepMaterial(RED_ENEMY_PALETTE);
-}
-
-const RED_EDGE_STEP_PALETTE: StepPalette = {
-  highlight: "#ef4444",
-  faceTop: "#7f1d1d",
-  faceBottom: "#450a0a",
-  shadow: "#1c0505",
-  rune: "rgba(239, 68, 68, 0.4)",
-  tint: "#fecaca",
-};
-
-const GREEN_EDGE_STEP_PALETTE: StepPalette = { highlight: '#4ade80', faceTop: STONE_STEP_PALETTE.faceTop, faceBottom: STONE_STEP_PALETTE.faceBottom, shadow: STONE_STEP_PALETTE.shadow, rune: 'rgba(74,222,128,0.4)', tint: STONE_STEP_PALETTE.tint };
-
-export function createTogglableStairMaterial(extended: boolean): THREE.MeshStandardMaterial {
+export function createDoorMaterial(): THREE.MeshStandardMaterial {
   const textureLoader = new THREE.TextureLoader();
-  
-  const liftColorUrl = new URL("./textures/lift/lift_col.png", import.meta.url).href;
-  const liftNormalUrl = new URL("./textures/lift/lift_nrm.png", import.meta.url).href;
-  
-  const colorTexture = textureLoader.load(liftColorUrl);
-  const normalTexture = textureLoader.load(liftNormalUrl);
-  
-  colorTexture.wrapS = THREE.ClampToEdgeWrapping;
-  colorTexture.wrapT = THREE.ClampToEdgeWrapping;
-  normalTexture.wrapS = THREE.ClampToEdgeWrapping;
-  normalTexture.wrapT = THREE.ClampToEdgeWrapping;
-  
+
+  const liftColorUrl = new URL("./textures/door/door_col.jpg", import.meta.url).href;
+  const liftNormalUrl = new URL("./textures/door/door_nrm.jpg", import.meta.url).href;
+
+  const colorTexture = configureColorMap(textureLoader.load(liftColorUrl), { anisotropy: 8 });
+  const normalTexture = configureNormalMap(textureLoader.load(liftNormalUrl), { anisotropy: 8 });
+
   return new THREE.MeshStandardMaterial({
     map: colorTexture,
     normalMap: normalTexture,
-    roughness: 0.6,
-    metalness: 0.2,
-  });
-}
-
-export function createCollapsingStairMaterial(): THREE.MeshStandardMaterial {
-  const textureLoader = new THREE.TextureLoader();
-  
-  const liftColorUrl = new URL("./textures/lift/lift_col.png", import.meta.url).href;
-  const liftNormalUrl = new URL("./textures/lift/lift_nrm.png", import.meta.url).href;
-  
-  const colorTexture = textureLoader.load(liftColorUrl);
-  const normalTexture = textureLoader.load(liftNormalUrl);
-  
-  colorTexture.wrapS = THREE.ClampToEdgeWrapping;
-  colorTexture.wrapT = THREE.ClampToEdgeWrapping;
-  normalTexture.wrapS = THREE.ClampToEdgeWrapping;
-  normalTexture.wrapT = THREE.ClampToEdgeWrapping;
-  
-  return new THREE.MeshStandardMaterial({
-    map: colorTexture,
-    normalMap: normalTexture,
-    roughness: 0.6,
-    metalness: 0.2,
+    normalScale: new THREE.Vector2(1.0, 1.0),
+    roughness: 1.0,
+    metalness: 0.18,
   });
 }
 
 export function createDoorFrameMaterial(): THREE.MeshStandardMaterial {
   const textureLoader = new THREE.TextureLoader();
-  
-  const liftColorUrl = new URL("./textures/lift/lift_col.png", import.meta.url).href;
-  const liftNormalUrl = new URL("./textures/lift/lift_nrm.png", import.meta.url).href;
-  
-  const colorTexture = textureLoader.load(liftColorUrl);
-  const normalTexture = textureLoader.load(liftNormalUrl);
-  
+
+  const liftColorUrl = new URL("./textures/lift/STEP_col.png", import.meta.url).href;
+  const liftNormalUrl = new URL("./textures/lift/STEP_nrm.png", import.meta.url).href;
+
+  const colorTexture = configureColorMap(textureLoader.load(liftColorUrl), { anisotropy: 8 });
+  const normalTexture = configureNormalMap(textureLoader.load(liftNormalUrl), { anisotropy: 8 });
+
+  return new THREE.MeshStandardMaterial({
+    map: colorTexture,
+    normalMap: normalTexture,
+    normalScale: new THREE.Vector2(1.0, 1.0),
+    roughness: 1.0,
+    metalness: 0.18,
+  });
+}
+
+export function createTowerMaterial(
+  loader?: THREE.TextureLoader,
+  _radius: number = 6.12,
+  _height: number = 52
+): THREE.Material {
+  const textureLoader = loader ?? new THREE.TextureLoader();
+
+  const wallColorTextureUrl = new URL("./textures/wall/WALL_col.jpg", import.meta.url).href;
+  const wallNormalTextureUrl = new URL("./textures/wall/WALL_nrm.jpg", import.meta.url).href;
+
+  const repeatU = 10;
+  const repeatV = Math.max(1, Math.ceil((_height || 52) / 4));
+  const repeat: [number, number] = [repeatU, repeatV];
+
+  const texture = configureColorMap(textureLoader.load(wallColorTextureUrl), {
+    wrapS: THREE.RepeatWrapping,
+    wrapT: THREE.RepeatWrapping,
+    repeat,
+    anisotropy: 10,
+  });
+  const normalTexture = configureNormalMap(textureLoader.load(wallNormalTextureUrl), {
+    wrapS: THREE.RepeatWrapping,
+    wrapT: THREE.RepeatWrapping,
+    repeat,
+    anisotropy: 10,
+  });
+
+  return new THREE.MeshStandardMaterial({
+    map: texture,
+    normalMap: normalTexture,
+    normalScale: new THREE.Vector2(1.85, 1.85),
+    roughness: 1.0,
+    metalness: 0.18,
+  });
+}
+
+// --- STAIRS MATERIAL ----------------------------------------------------------
+
+export function createStairsMaterial(loader?: THREE.TextureLoader): THREE.Material {
+  const textureLoader = loader || new THREE.TextureLoader();
+
+  const stepColorUrl = new URL("./textures/step/STEP_col.jpg", import.meta.url).href;
+  const stepNormalUrl = new URL("./textures/step/STEP_nrm.jpg", import.meta.url).href;
+
+  const colorTexture = configureColorMap(textureLoader.load(stepColorUrl));
+  const normalTexture = configureNormalMap(textureLoader.load(stepNormalUrl));
+
+  return new THREE.MeshStandardMaterial({
+    map: colorTexture,
+    normalMap: normalTexture,
+    roughness: 1.0,
+    metalness: 0.1,
+  });
+}
+
+// --- ELEVATOR MATERIAL ----------------------------------------------------------
+
+export function createElevatorMaterial(): THREE.MeshStandardMaterial {
+  const textureLoader = new THREE.TextureLoader();
+
+  const liftColorUrl = new URL("./textures/lift/STEP_col.png", import.meta.url).href;
+  const liftNormalUrl = new URL("./textures/lift/STEP_nrm.png", import.meta.url).href;
+
+  const colorTexture = configureColorMap(textureLoader.load(liftColorUrl));
+  const normalTexture = configureNormalMap(textureLoader.load(liftNormalUrl));
+
+  return new THREE.MeshStandardMaterial({
+    map: colorTexture,
+    normalMap: normalTexture,
+    normalScale: new THREE.Vector2(1.85, 1.85),
+    roughness: 1.0,
+    metalness: 0.2,
+  });
+}
+
+
+// --- ENEMY MATERIAL ----------------------------------------------------------
+
+export function createEnemyMaterial(): THREE.MeshStandardMaterial {
+  const textureLoader = new THREE.TextureLoader();
+
+  const enemyColorUrl = new URL("./textures/enemy/ENEMY_col.jpg", import.meta.url).href;
+  const enemyNormalUrl = new URL("./textures/enemy/ENEMY_nrm.jpg", import.meta.url).href;
+
+  const colorTexture = textureLoader.load(enemyColorUrl);
+  const normalTexture = textureLoader.load(enemyNormalUrl);
+
   colorTexture.wrapS = THREE.ClampToEdgeWrapping;
   colorTexture.wrapT = THREE.ClampToEdgeWrapping;
   normalTexture.wrapS = THREE.ClampToEdgeWrapping;
   normalTexture.wrapT = THREE.ClampToEdgeWrapping;
-  
+
   return new THREE.MeshStandardMaterial({
     map: colorTexture,
     normalMap: normalTexture,
-    roughness: 0.5,
-    metalness: 0.3,
+    roughness: 0.6,
+    metalness: 0.2,
   });
 }
 
+// --- DOOR FRAME ----------------------------------------------------------
+
+export function createCollapsingStairMaterial(): THREE.MeshStandardMaterial {
+  const textureLoader = new THREE.TextureLoader();
+
+  const colUrl = new URL("./textures/collapse/STEP_col.png", import.meta.url).href;
+  const nrmUrl = new URL("./textures/collapse/STEP_nrm.png", import.meta.url).href;
+
+  const map = configureColorMap(textureLoader.load(colUrl));
+  const normalMap = configureNormalMap(textureLoader.load(nrmUrl));
+
+  return new THREE.MeshStandardMaterial({
+    map,
+    normalMap,
+    roughness: 0.6,
+    metalness: 0.2,
+  });
+}
+export function createTogglableStairMaterial(): THREE.MeshStandardMaterial {
+  const textureLoader = new THREE.TextureLoader();
+
+  const colUrl = new URL("./textures/step/STEP_col.jpg", import.meta.url).href;
+  const nrmUrl = new URL("./textures/step/STEP_nrm.jpg", import.meta.url).href;
+
+  const map = configureColorMap(textureLoader.load(colUrl));
+  const normalMap = configureNormalMap(textureLoader.load(nrmUrl));
+
+  return new THREE.MeshStandardMaterial({
+    map,
+    normalMap,
+    roughness: 0.6,
+    metalness: 0.2,
+  });
+}
 export function createGemTexture(): THREE.Texture {
   const canvas = createProceduralCanvas(64, 64, (ctx, w, h) => {
     ctx.clearRect(0, 0, w, h);
@@ -329,5 +297,5 @@ export function createGemTexture(): THREE.Texture {
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, w, h);
   });
-  return new THREE.CanvasTexture(canvas);
+  return configureColorMap(new THREE.CanvasTexture(canvas));
 }

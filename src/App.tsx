@@ -56,6 +56,10 @@ export default function App() {
     renderScale: 1,
     soundMuted: false,
   });
+  const configRef = useRef(config);
+  useEffect(() => {
+    configRef.current = config;
+  }, [config]);
 
   const [playerState, setPlayerState] = useState({
     level: 0,
@@ -98,9 +102,9 @@ export default function App() {
       gameRef.current = game;
       setTowerHeight(game.towerHeight);
       setPlayerState((prev) => ({ ...prev, totalGems: game.level.gems.length }));
-      game.config = { ...config };
+      game.config = { ...configRef.current };
       game.applyCanvasFilter();
-      soundEngine.setMuted(config.soundMuted);
+      soundEngine.setMuted(configRef.current.soundMuted);
       game.setRenderResolution(resolution.width, resolution.height);
 
       game.onPlayerStateUpdate = (pState) => {
