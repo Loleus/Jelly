@@ -422,7 +422,7 @@ export class GlowerTowerGame {
     }
 
     // Synchronizuję pozycję sunLight z tym samym elevation/azimuth
-    const sunDistance = 55;
+    const sunDistance = 125;
     this.sunLight.position.copy(this.sun).multiplyScalar(sunDistance);
 
     this.sunLight.target.position.set(0, 5, 0);
@@ -571,7 +571,7 @@ export class GlowerTowerGame {
         color: "#fbbf24",
         emissive: "#d97706",
         emissiveIntensity: 0.18,
-        roughness: 0.2,
+        roughness: 0.5,
         metalness: 0.8,
       })
     );
@@ -928,68 +928,7 @@ export class GlowerTowerGame {
     return stairCenterX(fromSlot);
   }
 
-  // private buildHazards() {
-  //   const hazardSpecs = this.level.enemies;
-
-  //   // Piłka z teksturą schodka przetworzoną na kolor czerwony
-  //   const redStairMat = createEnemyMaterial();
-  //   const orbGeo = new THREE.SphereGeometry(0.32, 14, 14);
-
-  //   const playerJumpHeight = (JUMP_SPEED * JUMP_SPEED) / (2 * GRAVITY);
-  //   const defaultBallBounceHeight = playerJumpHeight * 0.5;
-
-  //   hazardSpecs.forEach((spec) => {
-  //     const behavior = spec.behavior ?? "bounce";
-  //     const amplitude = spec.amplitude ?? defaultBallBounceHeight;
-  //     const speed = spec.speed ?? 1.2;
-
-  //     const slot = stairIndexAt(spec.xCenter);
-
-  //     // Schodek dla przeciwnika — ten sam slot i podana wysokość.
-  //     let baseY = spec.y;
-  //     for (const plat of this.staticStairs) {
-  //       if (
-  //         stairIndexAt(plat.x) === slot &&
-  //         Math.abs(plat.topY - spec.y) < 0.75
-  //       ) {
-  //         baseY = plat.topY;
-  //         break;
-  //       }
-  //     }
-
-  //     const enemyX = stairCenterX(slot);
-  //     const moveSteps = Math.max(0, Math.floor(spec.moveSteps ?? 0));
-  //     const direction: -1 | 1 = spec.direction === -1 ? -1 : 1;
-  //     const naturalFlightTime = 2 * Math.sqrt((2 * amplitude) / GRAVITY);
-  //     const bounceDuration = naturalFlightTime / Math.max(0.25, speed);
-  //     const targetX = this.findEnemyLandingX(enemyX, baseY, moveSteps, direction);
-
-  //     const mesh = new THREE.Mesh(orbGeo, redStairMat);
-  //     mesh.castShadow = true;
-  //     this.scene.add(mesh);
-
-  //     this.hazards.push({
-  //       id: spec.id,
-  //       x: enemyX,
-  //       y: spec.y,
-  //       behavior,
-  //       amplitude,
-  //       speed,
-  //       currentX: enemyX,
-  //       bounceElapsed: 0,
-  //       bounceDuration,
-  //       bounceBaseY: baseY,
-  //       bounceFromX: enemyX,
-  //       bounceToX: targetX,
-  //       moveSteps,
-  //       direction,
-  //       mesh,
-  //       theta: stepToTheta(enemyX),
-  //     });
-  //   });
-  // }
-
-  private buildHazards() {  
+  private buildHazards() {
     const hazardSpecs = this.level.enemies;
 
     // Materiał z teksturą (z createEnemyMaterial)
@@ -1225,19 +1164,12 @@ export class GlowerTowerGame {
       const color = isEntrance ? "#22c55e" : "#ef4444";
       const group = new THREE.Group();
 
-      const stoneMaterial = createDoorFrameMaterial();
+
       const doorMaterial = createDoorMaterial();
-      // const doorMaterial = new THREE.MeshStandardMaterial({
-      //   color,
-      //   emissive: color,
-      //   emissiveIntensity: 0.12,
-      //   roughness: 0.35,
-      //   metalness: 0.55,
-      // });
+      const stoneMaterial = createDoorFrameMaterial();
 
       const panel = new THREE.Mesh(new THREE.BoxGeometry(0.85, 2.0, 0.16), doorMaterial);
       panel.position.set(0, 0.95, 0.03);
-
       panel.castShadow = true;
       group.add(panel);
 
@@ -1245,7 +1177,23 @@ export class GlowerTowerGame {
       const rightPost = leftPost.clone();
       leftPost.position.set(-0.53, 1.05, 0);
       rightPost.position.set(0.53, 1.05, 0);
-      const lintel = new THREE.Mesh(new THREE.BoxGeometry(1.25, 0.2, 0.3), stoneMaterial);
+
+      // Sklonuj materiał tylko dla lintela, żeby nie zmieniać postów
+      const lintelMat = stoneMaterial.clone();
+
+      // Obrót tekstury o 90 stopni (Math.PI/2). Ustaw środek rotacji na środek tekstury.
+      if (lintelMat.map) {
+        lintelMat.map.center.set(0.5, 0.5);
+        lintelMat.map.rotation = Math.PI / 2;
+        lintelMat.map.needsUpdate = true;
+      }
+      if (lintelMat.normalMap) {
+        lintelMat.normalMap.center.set(0.5, 0.5);
+        lintelMat.normalMap.rotation = Math.PI / 2;
+        lintelMat.normalMap.needsUpdate = true;
+      }
+
+      const lintel = new THREE.Mesh(new THREE.BoxGeometry(1.25, 0.2, 0.3), lintelMat);
       lintel.position.set(0, 2.05, 0);
       group.add(leftPost, rightPost, lintel);
 
@@ -1634,148 +1582,148 @@ export class GlowerTowerGame {
     });
 
     // Hazards – bouncing / patrolling / static
-this.hazards.forEach((haz) => {
-  switch (haz.behavior) {
-    case "bounce": {
-      haz.bounceElapsed += dt;
+    this.hazards.forEach((haz) => {
+      switch (haz.behavior) {
+        case "bounce": {
+          haz.bounceElapsed += dt;
 
-      // Lądowanie: dopiero tutaj wolno ustalić/zmienić kierunek następnego skoku.
-      if (haz.bounceElapsed >= haz.bounceDuration) {
-        haz.bounceElapsed %= haz.bounceDuration;
-        haz.x = haz.bounceToX;
+          // Lądowanie: dopiero tutaj wolno ustalić/zmienić kierunek następnego skoku.
+          if (haz.bounceElapsed >= haz.bounceDuration) {
+            haz.bounceElapsed %= haz.bounceDuration;
+            haz.x = haz.bounceToX;
 
-        if (haz.moveSteps > 0) {
-          const expectedSlot = stairIndexAt(
-            stairIndexAt(haz.bounceFromX) + haz.direction * haz.moveSteps
-          );
-          if (stairIndexAt(haz.x) !== expectedSlot) {
-            haz.direction = haz.direction === 1 ? -1 : 1;
+            if (haz.moveSteps > 0) {
+              const expectedSlot = stairIndexAt(
+                stairIndexAt(haz.bounceFromX) + haz.direction * haz.moveSteps
+              );
+              if (stairIndexAt(haz.x) !== expectedSlot) {
+                haz.direction = haz.direction === 1 ? -1 : 1;
+              }
+            }
+
+            haz.bounceFromX = haz.x;
+            haz.bounceToX = this.findEnemyLandingX(
+              haz.x,
+              haz.bounceBaseY,
+              haz.moveSteps,
+              haz.direction
+            );
           }
+
+          const t = THREE.MathUtils.clamp(
+            haz.bounceElapsed / haz.bounceDuration,
+            0,
+            1
+          );
+
+          // Naturalna parabola balistyczna: 0 przy lądowaniu, H w połowie lotu.
+          const bounceY = 4 * haz.amplitude * t * (1 - t);
+
+          // Najkrótsza droga po zawiniętym obwodzie, zawsze środek -> środek.
+          let dx = haz.bounceToX - haz.bounceFromX;
+          if (dx > CIRCUMFERENCE_STEPS * 0.5) dx -= CIRCUMFERENCE_STEPS;
+          if (dx < -CIRCUMFERENCE_STEPS * 0.5) dx += CIRCUMFERENCE_STEPS;
+          haz.currentX = wrapValue(haz.bounceFromX + dx * t, CIRCUMFERENCE_STEPS);
+          haz.theta = stepToTheta(haz.currentX);
+          const ballY = haz.bounceBaseY + 0.32 + bounceY;
+
+          if (haz.mesh) {
+            const rad = new THREE.Vector3(
+              Math.sin(haz.theta),
+              0,
+              Math.cos(haz.theta)
+            );
+            haz.mesh.position.set(
+              rad.x * PLAYER_STAND_RADIUS,
+              ballY,
+              rad.z * PLAYER_STAND_RADIUS
+            );
+            haz.mesh.userData.currentY = ballY;
+            // Obrót gumowej/koszykarskiej piłki podczas lotu.
+            haz.mesh.rotation.x += dt * 5;
+            haz.mesh.rotation.z += dt * 2.5;
+          }
+          break;
         }
-
-        haz.bounceFromX = haz.x;
-        haz.bounceToX = this.findEnemyLandingX(
-          haz.x,
-          haz.bounceBaseY,
-          haz.moveSteps,
-          haz.direction
-        );
+        case "patrol": {
+          const patrolN = Math.sin(timeSec * haz.speed);
+          haz.currentX = wrapValue(
+            haz.x + patrolN * haz.amplitude,
+            CIRCUMFERENCE_STEPS
+          );
+          haz.theta = stepToTheta(haz.currentX);
+          if (haz.mesh) {
+            const rad = new THREE.Vector3(
+              Math.sin(haz.theta),
+              0,
+              Math.cos(haz.theta)
+            );
+            haz.mesh.position.set(
+              rad.x * PLAYER_STAND_RADIUS,
+              haz.bounceBaseY + 0.7,
+              rad.z * PLAYER_STAND_RADIUS
+            );
+            haz.mesh.userData.currentY = haz.bounceBaseY + 0.7;
+            // Dodana rotacja taka sama jak w bounce
+            haz.mesh.rotation.x += dt * 5;
+            haz.mesh.rotation.z += dt * 2.5;
+          }
+          break;
+        }
+        case "static":
+        default:
+          haz.currentX = haz.x;
+          haz.theta = stepToTheta(haz.x);
+          if (haz.mesh) {
+            const rad = new THREE.Vector3(
+              Math.sin(haz.theta),
+              0,
+              Math.cos(haz.theta)
+            );
+            haz.mesh.position.set(
+              rad.x * PLAYER_STAND_RADIUS,
+              haz.bounceBaseY + 0.7,
+              rad.z * PLAYER_STAND_RADIUS
+            );
+            haz.mesh.userData.currentY = haz.bounceBaseY + 0.7;
+            // Dodana rotacja taka sama jak w bounce
+            haz.mesh.rotation.x += dt * 5;
+            haz.mesh.rotation.z += dt * 2.5;
+          }
+          break;
       }
 
-      const t = THREE.MathUtils.clamp(
-        haz.bounceElapsed / haz.bounceDuration,
-        0,
-        1
-      );
+      // Kolizja z graczem
+      const hazMesh = haz.mesh;
+      const hazY =
+        hazMesh && (hazMesh.userData as Record<string, number>)?.currentY
+          ? (hazMesh.userData as Record<string, number>).currentY
+          : haz.y;
 
-      // Naturalna parabola balistyczna: 0 przy lądowaniu, H w połowie lotu.
-      const bounceY = 4 * haz.amplitude * t * (1 - t);
+      if (
+        this.playerState.enemyHitCooldown <= 0 &&
+        hazY + 0.32 >= this.playerState.y - 0.1 &&
+        hazY - 0.32 <= this.playerState.y + 2.4 &&
+        overlapsWrapped(
+          this.playerState.x,
+          PLAYER_HALF_WIDTH * 1.5,
+          haz.currentX,
+          0.4
+        )
+      ) {
+        this.playerState.enemyHitCooldown = 0.8;
 
-      // Najkrótsza droga po zawiniętym obwodzie, zawsze środek -> środek.
-      let dx = haz.bounceToX - haz.bounceFromX;
-      if (dx > CIRCUMFERENCE_STEPS * 0.5) dx -= CIRCUMFERENCE_STEPS;
-      if (dx < -CIRCUMFERENCE_STEPS * 0.5) dx += CIRCUMFERENCE_STEPS;
-      haz.currentX = wrapValue(haz.bounceFromX + dx * t, CIRCUMFERENCE_STEPS);
-      haz.theta = stepToTheta(haz.currentX);
-      const ballY = haz.bounceBaseY + 0.32 + bounceY;
-
-      if (haz.mesh) {
-        const rad = new THREE.Vector3(
-          Math.sin(haz.theta),
-          0,
-          Math.cos(haz.theta)
-        );
-        haz.mesh.position.set(
-          rad.x * PLAYER_STAND_RADIUS,
-          ballY,
-          rad.z * PLAYER_STAND_RADIUS
-        );
-        haz.mesh.userData.currentY = ballY;
-        // Obrót gumowej/koszykarskiej piłki podczas lotu.
-        haz.mesh.rotation.x += dt * 5;
-        haz.mesh.rotation.z += dt * 2.5;
+        // Lekki podskok po uderzeniu. Nie teleportujemy na dół — fizyka
+        // ignoruje tylko bieżący schodek i pozwala wylądować na windzie lub
+        // najbliższym niższym schodku.
+        this.playerState.knockdownFloorY = this.playerState.y;
+        this.playerState.vy = 7.5;
+        this.playerState.grounded = false;
+        this.playerState.rideElevator = -1;
+        this.playerState.jiggleVel -= 8;
+        this.spawnParticles(this.playerGroup.position, 8, 0xfef08a, 2.0);
       }
-      break;
-    }
-    case "patrol": {
-      const patrolN = Math.sin(timeSec * haz.speed);
-      haz.currentX = wrapValue(
-        haz.x + patrolN * haz.amplitude,
-        CIRCUMFERENCE_STEPS
-      );
-      haz.theta = stepToTheta(haz.currentX);
-      if (haz.mesh) {
-        const rad = new THREE.Vector3(
-          Math.sin(haz.theta),
-          0,
-          Math.cos(haz.theta)
-        );
-        haz.mesh.position.set(
-          rad.x * PLAYER_STAND_RADIUS,
-          haz.bounceBaseY + 0.7,
-          rad.z * PLAYER_STAND_RADIUS
-        );
-        haz.mesh.userData.currentY = haz.bounceBaseY + 0.7;
-        // Dodana rotacja taka sama jak w bounce
-        haz.mesh.rotation.x += dt * 5;
-        haz.mesh.rotation.z += dt * 2.5;
-      }
-      break;
-    }
-    case "static":
-    default:
-      haz.currentX = haz.x;
-      haz.theta = stepToTheta(haz.x);
-      if (haz.mesh) {
-        const rad = new THREE.Vector3(
-          Math.sin(haz.theta),
-          0,
-          Math.cos(haz.theta)
-        );
-        haz.mesh.position.set(
-          rad.x * PLAYER_STAND_RADIUS,
-          haz.bounceBaseY + 0.7,
-          rad.z * PLAYER_STAND_RADIUS
-        );
-        haz.mesh.userData.currentY = haz.bounceBaseY + 0.7;
-        // Dodana rotacja taka sama jak w bounce
-        haz.mesh.rotation.x += dt * 5;
-        haz.mesh.rotation.z += dt * 2.5;
-      }
-      break;
-  }
-
-  // Kolizja z graczem
-  const hazMesh = haz.mesh;
-  const hazY =
-    hazMesh && (hazMesh.userData as Record<string, number>)?.currentY
-      ? (hazMesh.userData as Record<string, number>).currentY
-      : haz.y;
-
-  if (
-    this.playerState.enemyHitCooldown <= 0 &&
-    hazY + 0.32 >= this.playerState.y - 0.1 &&
-    hazY - 0.32 <= this.playerState.y + 2.4 &&
-    overlapsWrapped(
-      this.playerState.x,
-      PLAYER_HALF_WIDTH * 1.5,
-      haz.currentX,
-      0.4
-    )
-  ) {
-    this.playerState.enemyHitCooldown = 0.8;
-
-    // Lekki podskok po uderzeniu. Nie teleportujemy na dół — fizyka
-    // ignoruje tylko bieżący schodek i pozwala wylądować na windzie lub
-    // najbliższym niższym schodku.
-    this.playerState.knockdownFloorY = this.playerState.y;
-    this.playerState.vy = 7.5;
-    this.playerState.grounded = false;
-    this.playerState.rideElevator = -1;
-    this.playerState.jiggleVel -= 8;
-    this.spawnParticles(this.playerGroup.position, 8, 0xfef08a, 2.0);
-  }
-});
+    });
 
 
     // Springs cooldown
@@ -2681,11 +2629,9 @@ this.hazards.forEach((haz) => {
     }
   }
 
-  /**
-   * Zmienia natywną rozdzielczość renderowania (bufor klatki), nie rozciągając obrazu.
-   * FOV jest korygowany tak, aby poziome pole widzenia było co najmniej takie
-   * jak w bazowym kadrze 4:3 — dzięki temu na wąskich ekranach nic nie „ucieka" z boków.
-   */
+  // ==========================================
+  // RENDER RESOLUTION & CAMERA FOV ADJUSTMENT
+  // ==========================================
   public setRenderResolution(width: number, height: number) {
     const s = this.config.renderScale;
     const w = width * s;
