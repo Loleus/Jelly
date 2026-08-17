@@ -27,10 +27,15 @@ const LevelTile: React.FC<LevelTileProps> = ({ t, levelNum, progress, onSelect }
   const tone = !unlocked
     ? "bg-[#0e4a6e]/50 text-white/30 cursor-not-allowed"
     : completed
-    ? "bg-gradient-to-br from-[#86efac] to-[#4ade80] text-[#0e4a6e] hover:scale-110"
-    : isNext
-    ? "bg-gradient-to-br from-[#7fd4e6] to-[#a8c8ea] text-[#0e4a6e] animate-pulse hover:scale-110"
-    : "bg-gradient-to-br from-[#0e4a6e]/80 to-[#4ade80]/60 text-[#86efac] hover:scale-110";
+      ? "bg-gradient-to-br from-[#86efac] to-[#4ade80] text-[#0e4a6e] hover:scale-110"
+      : isNext
+        ? "bg-gradient-to-br from-[#7fd4e6] to-[#a8c8ea] text-[#0e4a6e] animate-pulse hover:scale-110"
+        : "bg-gradient-to-br from-[#0e4a6e]/80 to-[#4ade80]/60 text-[#86efac] hover:scale-110";
+  const formatTime = (timeSec: number): string => {
+    const minutes = Math.floor(timeSec / 60);
+    const seconds = Math.floor(timeSec % 60);
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  };
 
   return (
     <button
@@ -44,7 +49,8 @@ const LevelTile: React.FC<LevelTileProps> = ({ t, levelNum, progress, onSelect }
           <div>
             {best.jumps} {t.bestJumps}
           </div>
-          <div>{best.timeSec}s</div>
+          {/* <div>{best.timeSec}s</div> */}
+          <div>{formatTime(best.timeSec)}</div>
         </div>
       ) : !unlocked ? (
         <div className="mt-1 text-base opacity-60 flex justify-center">
