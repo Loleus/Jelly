@@ -87,7 +87,7 @@ export const JUMP_SPEED = 11.2;
 export const GRAVITY = 28.5;
 export const TOWER_RADIUS = 6;
 export const PLATFORM_THICKNESS = 0.35;
-export const PLATFORM_DEPTH = 2.2;
+export const PLATFORM_DEPTH = 2.4;
 export const TAU = Math.PI * 2;
 export const PLAYER_STAND_RADIUS = TOWER_RADIUS + PLATFORM_DEPTH * 0.5;
 export const FIRST_STEP_CENTER = 0.5;
@@ -1489,6 +1489,7 @@ export class GlowerTowerGame {
   // ==========================================
   // PHYSICS SIMULATION (FIXED TIMESTEP)
   // ==========================================
+
   private stepPhysics(dt: number) {
     // W menu fizyka jest zamrożona (ludzik stoi, nic go nie porusza)
     if (this.sceneMode === "menu") return;
@@ -1927,6 +1928,7 @@ export class GlowerTowerGame {
       // If deep enough, trigger respawn / gameover
       if (this.playerState.y < this.waterLevel - 1.5) {
         if (this.activeCheckpoint > 0) {
+          this.resetInput();
           this.respawnAtCheckpoint();
         } else {
           this.setGameStatus("gameover");
@@ -2101,6 +2103,7 @@ export class GlowerTowerGame {
   // ==========================================
   // OCCLUSION & FRUSTUM CULLING PASS
   // ==========================================
+
   private performCullingPass(camTheta: number, camY: number) {
     this.culler.cullingEnabled = this.config.cullingEnabled;
     this.culler.updateFrustum(this.camera);
@@ -2214,6 +2217,7 @@ export class GlowerTowerGame {
   // ==========================================
   // RENDER & ANIMATION LOOP
   // ==========================================
+
   private startLoop() {
     const loop = (time: number) => {
       this.animFrameId = window.requestAnimationFrame(loop);
