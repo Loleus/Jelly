@@ -61,23 +61,23 @@ export const GameHUD: React.FC<GameHUDProps> = ({
 }) => (
   <header className="hud-header pointer-events-none fixed inset-0 z-30">
     {/* Tower + floor (top-left) */}
-    <div className="font-freckle drop-shadow-[0_4px_12px_rgba(0,0,0,0.95)] absolute left-1.5 top-1.5 sm:left-2 sm:top-2">
+    <div className="font-freckle absolute left-1.5 top-1.5 sm:left-2 sm:top-2">
       <div className="text-lg sm:text-4xl tracking-wider text-[#86efac] [@media(max-height:500px)]:text-base">
-        {t.hudTower} {currentLevel} <span className="text-[#4ade80]/60">/ {TOTAL_LEVELS}</span>
+        {t.hudTower} {currentLevel} <span className="text-[#4ade80]/90">/ {TOTAL_LEVELS}</span>
       </div>
       <div className="text-lg sm:text-4xl tracking-wider text-[#7fd4e6] [@media(max-height:500px)]:text-base">
-        {t.hudFloor} {playerLevel} <span className="text-[#7fd4e6]/50">/ {towerHeight}</span>
+        {t.hudFloor} {playerLevel} <span className="text-[#7fd4e6]/90">/ {towerHeight}</span>
       </div>
     </div>
 
     {/* Score row (center) */}
-    <div className="hud-score pointer-events-auto flex flex-row flex-nowrap items-center gap-4 whitespace-nowrap font-freckle drop-shadow-[0_4px_14px_rgba(0,0,0,0.95)]">
+    <div className="hud-score pointer-events-auto flex flex-row flex-nowrap items-center gap-4 whitespace-nowrap font-freckle">
       <StatCell
         icon={<Diamond className={`${ICON_SIZE} fill-[#4ade80]`} />}
         color="text-[#86efac]"
       >
         {gemsCollected}
-        <span className="text-[#4ade80]/60"> / {totalGems}</span>
+        <span className="text-[#4ade80]/90"> / {totalGems}</span>
       </StatCell>
       <StatCell icon={<Clock className={ICON_SIZE} />} color="text-[#7fd4e6]">
         {formatTime(displayTime)}

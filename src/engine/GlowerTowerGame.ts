@@ -395,16 +395,16 @@ export class GlowerTowerGame {
     // Bardziej zachodowe słońce: ciepły czerwony horyzont po jednej stronie,
     // chłodny szaroniebieski / błękit po przeciwnej stronie.
     // Elevation 45° – cienie pod kątem 45 stopni
-    const elevation = 40;
+    const elevation = 33;
     const azimuth = 220;
 
     const phi = THREE.MathUtils.degToRad(90 - elevation);
     const theta = THREE.MathUtils.degToRad(azimuth);
     this.sun.setFromSphericalCoords(1, phi, theta);
 
-    skyUniforms["turbidity"].value = 6.5;
-    skyUniforms["rayleigh"].value = 2.0;
-    skyUniforms["mieCoefficient"].value = 0.008;
+    skyUniforms["turbidity"].value = 1.0;
+    skyUniforms["rayleigh"].value = 1.0;
+    skyUniforms["mieCoefficient"].value = 0.08;
     skyUniforms["mieDirectionalG"].value = 0.85;
     skyUniforms["sunPosition"].value.copy(this.sun);
 
@@ -456,13 +456,14 @@ export class GlowerTowerGame {
     const waterGeometry = new THREE.PlaneGeometry(12000, 12000);
 
     // Woda – dokładnie jak w three.js ocean example
-    const waterNormals = new THREE.TextureLoader().load(
-      "https://threejs.org/examples/textures/waternormals.jpg",
-      (texture) => {
-        texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-      }
-    );
-    waterNormals.wrapS = waterNormals.wrapT = THREE.RepeatWrapping;
+const textureLoader = new THREE.TextureLoader();
+
+const waterNormalsUrl = new URL("../textures/waternormals.jpg", import.meta.url).href;
+
+const waterNormals = textureLoader.load(waterNormalsUrl);
+waterNormals.wrapS = THREE.RepeatWrapping;
+waterNormals.wrapT = THREE.RepeatWrapping;
+
 
     this.water = new Water(waterGeometry, {
       textureWidth: 512,
