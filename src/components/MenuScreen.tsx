@@ -46,11 +46,11 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
 
       {/* Title */}
       <div className="menu-title pointer-events-none absolute inset-x-4 top-[6%] text-center [@media(max-height:500px)]:top-[3.75rem]">
-        <h1 className="font-freckle leading-[0.85] tracking-wide drop-shadow-[0_8px_28px_rgba(0,0,0,0.95)]">
+        <h1 className="font-freckle leading-[0.85] tracking-wide">
           <span className="block text-[6rem] text-transparent bg-clip-text bg-gradient-to-b from-[#a8c8ea] via-[#7fd4e6] to-[#4ade80] sm:text-[11rem] [@media(max-height:500px)]:text-[6rem]">
             {t.appName}
           </span>
-          <span className="block mt-1 whitespace-nowrap text-4xl text-transparent bg-clip-text bg-gradient-to-b from-[#86efac] via-[#4ade80] to-[#0e4a6e] drop-shadow-[0_0_28px_rgba(34,197,94,0.55)] sm:text-6xl [@media(max-height:500px)]:text-4xl [@media(max-height:500px)]:mt-1">
+          <span className="block mt-1 whitespace-nowrap text-4xl text-transparent bg-clip-text bg-gradient-to-b from-[#86efac] via-[#4ade80] to-[#0e4a6e] sm:text-6xl [@media(max-height:500px)]:text-4xl [@media(max-height:500px)]:mt-1">
             {t.appSubtitle}
           </span>
         </h1>

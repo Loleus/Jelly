@@ -402,18 +402,18 @@ export class GlowerTowerGame {
     const theta = THREE.MathUtils.degToRad(azimuth);
     this.sun.setFromSphericalCoords(1, phi, theta);
 
-    skyUniforms["turbidity"].value = 1.0;
+    skyUniforms["turbidity"].value = 2.0;
     skyUniforms["rayleigh"].value = 1.0;
-    skyUniforms["mieCoefficient"].value = 0.08;
-    skyUniforms["mieDirectionalG"].value = 0.85;
+    skyUniforms["mieCoefficient"].value = 0.005;
+    skyUniforms["mieDirectionalG"].value = 0.8;
     skyUniforms["sunPosition"].value.copy(this.sun);
 
     if (skyUniforms["cloudCoverage"]) {
-      skyUniforms["cloudScale"].value = 0.00011;
-      skyUniforms["cloudSpeed"].value = 0.0000055;
-      skyUniforms["cloudCoverage"].value = 0.12;
-      skyUniforms["cloudDensity"].value = 0.22;
-      skyUniforms["cloudElevation"].value = 0.32;
+      skyUniforms["cloudScale"].value = 0.0002;
+      skyUniforms["cloudSpeed"].value = 0.00001;
+      skyUniforms["cloudCoverage"].value = 0.4;
+      skyUniforms["cloudDensity"].value = 0.4;
+      skyUniforms["cloudElevation"].value = 0.5;
       skyUniforms["time"].value = 0;
     }
 
@@ -464,14 +464,15 @@ const waterNormals = textureLoader.load(waterNormalsUrl);
 waterNormals.wrapS = THREE.RepeatWrapping;
 waterNormals.wrapT = THREE.RepeatWrapping;
 
+    
 
     this.water = new Water(waterGeometry, {
       textureWidth: 512,
       textureHeight: 512,
       waterNormals: waterNormals,
       sunDirection: this.sun.clone().normalize(),
-      sunColor: 0x543809,
-      waterColor: 0x7F7F7F,
+      sunColor: 0x7F7F7F,
+      waterColor: 0x555555,
       distortionScale: 0.8,
       fog: this.scene.fog !== undefined,
     });
