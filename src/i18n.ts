@@ -123,8 +123,8 @@ export interface Translation {
 export const translations: Record<Lang, Translation> = {
   pl: {
     appName: "Glut Żelek",
-    appSubtitle: "Wieże",
-    pageTitle: "Glut Żelek: Wieże",
+    appSubtitle: "Wieża",
+    pageTitle: "Glut Żelek: Wieża",
 
     menuPlay: "GRAJ",
     menuPlayAria: "Graj",
@@ -235,8 +235,8 @@ export const translations: Record<Lang, Translation> = {
 
   en: {
     appName: "Jelly Slime",
-    appSubtitle: "The Towers",
-    pageTitle: "Jelly Slime: The Towers",
+    appSubtitle: "The Tower",
+    pageTitle: "Jelly Slime: The Tower",
 
     menuPlay: "PLAY",
     menuPlayAria: "Play",

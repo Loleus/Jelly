@@ -47,10 +47,10 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
       {/* Title */}
       <div className="menu-title pointer-events-none absolute inset-x-4 top-[6%] text-center [@media(max-height:500px)]:top-[3.75rem]">
         <h1 className="font-freckle leading-[0.85] tracking-wide">
-          <span className="block text-[6rem] text-transparent bg-clip-text bg-gradient-to-b from-[#a8c8ea] via-[#7fd4e6] to-[#4ade80] sm:text-[11rem] [@media(max-height:500px)]:text-[6rem]">
+          <span className="block text-[6rem] text-transparent bg-clip-text bg-gradient-to-b from-[#a8c8ea] via-[#7fe6b1] to-[#4ade80] sm:text-[11rem] [@media(max-height:500px)]:text-[6rem]">
             {t.appName}
           </span>
-          <span className="block mt-1 whitespace-nowrap text-4xl text-transparent bg-clip-text bg-gradient-to-b from-[#86efac] via-[#4ade80] to-[#0e4a6e] sm:text-6xl [@media(max-height:500px)]:text-4xl [@media(max-height:500px)]:mt-1">
+          <span className="block mt-1 whitespace-nowrap text-4xl text-transparent bg-clip-text bg-gradient-to-b from-[#86efac] via-[#4ade80] to-[#0e6e23] sm:text-6xl [@media(max-height:500px)]:text-4xl [@media(max-height:500px)]:mt-1">
             {t.appSubtitle}
           </span>
         </h1>
@@ -65,7 +65,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
         >
           <Play className="ml-1 h-10 w-10 fill-current drop-shadow-[0_3px_10px_rgba(0,0,0,0.35)] transition-transform duration-200 group-hover:scale-110 sm:h-12 sm:w-12 [@media(max-height:500px)]:ml-0.5 [@media(max-height:500px)]:h-6 [@media(max-height:500px)]:w-6" />
         </button>
-        <span className="mt-6 font-freckle text-xl tracking-[0.3em] text-[#d9f99d] drop-shadow-[0_3px_12px_rgba(0,0,0,0.9)] [@media(max-height:500px)]:mt-4 [@media(max-height:500px)]:text-base">
+        <span className="mt-6 font-freckle text-xl tracking-[0.3em] text-[#ecff66] drop-shadow-[0_3px_12px_rgba(0,0,0,0.9)] [@media(max-height:500px)]:mt-4 [@media(max-height:500px)]:text-base">
           {t.menuPlay}
         </span>
       </div>
