@@ -4,6 +4,7 @@ import type { Translation } from "../i18n";
 import { fireVictoryConfetti } from "../utils/confettiEffects";
 import { Modal } from "../ui/Modal";
 import { StatsGrid } from "../ui/StatsGrid";
+import { formatTime } from "../utils/formatTime";
 import {
   BTN_PRIMARY,
   BTN_SECONDARY,
@@ -103,7 +104,7 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
         <StatsGrid.Item label={t.jumpsLabel} value={jumps} size="base" />
         <StatsGrid.Item
           label={t.timeLabel}
-          value={`${Math.round(timeSec)} ${t.secondsSuffix}`}
+          value={`${formatTime(timeSec)} ${t.secondsSuffix}`}
           size="base"
         />
       </StatsGrid>

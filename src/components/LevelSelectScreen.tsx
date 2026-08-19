@@ -3,6 +3,7 @@ import { Home, Lock } from "lucide-react";
 import type { Translation } from "../i18n";
 import { LEVELS, TOTAL_LEVELS } from "../levels";
 import { isUnlocked, type SavedProgress } from "../levels/progress";
+import { formatTime } from "../utils/formatTime";
 
 interface LevelSelectScreenProps {
   t: Translation;
@@ -31,11 +32,6 @@ const LevelTile: React.FC<LevelTileProps> = ({ t, levelNum, progress, onSelect }
       : isNext
         ? "bg-gradient-to-br from-[#7fd4e6] to-[#a8c8ea] text-[#0e4a6e] animate-pulse hover:scale-110"
         : "bg-gradient-to-br from-[#0e4a6e]/80 to-[#4ade80]/60 text-[#86efac] hover:scale-110";
-  const formatTime = (timeSec: number): string => {
-    const minutes = Math.floor(timeSec / 60);
-    const seconds = Math.floor(timeSec % 60);
-    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-  };
 
   return (
     <button
@@ -49,7 +45,6 @@ const LevelTile: React.FC<LevelTileProps> = ({ t, levelNum, progress, onSelect }
           <div>
             {best.jumps} {t.bestJumps}
           </div>
-          {/* <div>{best.timeSec}s</div> */}
           <div>{formatTime(best.timeSec)}</div>
         </div>
       ) : !unlocked ? (
