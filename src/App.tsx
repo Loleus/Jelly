@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { flushSync } from "react-dom";
-
 import { GlowerTowerGame, pickResolutionProfile, type ResolutionProfile } from "./engine/GlowerTowerGame";
 import { EngineConfig, GameStatus } from "./engine/gameTypes";
 import { LEVELS, TOTAL_LEVELS, menuLevelIndex } from "./levels";
@@ -8,7 +7,6 @@ import type { TowerLevelDefinition } from "./levels/levelTypes";
 import { loadProgress, markLevelCompleted, isUnlocked, type SavedProgress } from "./levels/progress";
 import { soundEngine } from "./soundEngine";
 import { translations, loadLang, saveLang, type Lang } from "./i18n";
-
 import { TouchControls } from "./components/TouchControls";
 import { SettingsModal } from "./components/SettingsModal";
 import { VictoryModal, GameOverModal } from "./components/VictoryModal";
@@ -19,7 +17,6 @@ import { IosFullscreenGuide } from "./components/IosFullscreenGuide";
 import { MenuScreen } from "./components/MenuScreen";
 import { LevelSelectScreen } from "./components/LevelSelectScreen";
 import { GameHUD } from "./components/GameHUD";
-
 import { toggleFullscreen } from "./utils/fullscreen";
 import { useLoadingOverlay } from "./hooks/useLoadingOverlay";
 import { useRunTimer } from "./hooks/useRunTimer";
@@ -251,7 +248,12 @@ game.onGameStatusChange = (newStatus) => {
   useEffect(() => {
     gameRef.current?.setRenderResolution(resolution.width, resolution.height);
   }, [resolution]);
-
+useEffect(() => {
+  if (screen === "menu") {
+    const loader = document.getElementById("loader");
+    if (loader) loader.style.display = "none";
+  }
+}, [screen]);
   // ── Handlers ─────────────────────────────────────────────────────────────
   const handleConfigChange = useCallback(
     (newConfig: Partial<EngineConfig>) => {

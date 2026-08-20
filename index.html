@@ -1,31 +1,71 @@
 <!doctype html>
 <html lang="pl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>Glut Żelek: Wieże</title>
-    <meta name="theme-color" content="#0e4a6e" />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-title" content="Glut Żelek" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <link rel="manifest" href="./manifest.webmanifest" />
-    <link rel="apple-touch-icon" href="./icons/apple-touch-icon-180.png" />
-    <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
-    <link rel="icon" type="image/png" sizes="512x512" href="./icons/icon-512.png" />
-    <link href="https://fonts.googleapis.com/css2?family=Freckle+Face&family=Lacquer&display=swap" rel="stylesheet">
-    <style>
-      .font-freckle {
-        font-family: "Freckle Face", ui-serif, Georgia, serif;
-        font-weight: 400;
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Glut Żelek: Wieże</title>
+  <meta name="theme-color" content="#0e4a6e" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Glut Żelek" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon-180.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="./icons/icon-512.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Freckle+Face&family=Lacquer&display=swap" rel="stylesheet">
+  <style>
+    .font-freckle {
+      font-family: "Freckle Face", ui-serif, Georgia, serif;
+      font-weight: 400;
+    }
+
+    .font-lacquer {
+      font-family: "Lacquer", ui-sans-serif, system-ui, sans-serif;
+    }
+
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: #071018;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+      color: #cde7ff;
+      font-family: "Lacquer", sans-serif;
+      font-size: 20px;
+    }
+
+    .loader-spinner {
+      width: 60px;
+      height: 60px;
+      border: 6px solid #0e4a6e;
+      border-top-color: #4fc3f7;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
       }
-      .font-lacquer {
-        font-family: "Lacquer", ui-sans-serif, system-ui, sans-serif;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+    }
+  </style>
+</head>
+
+<body>
+  <div id="loader">
+    <div class="loader-spinner"></div>
+    <div class="loader-text">Ładowanie...</div>
+  </div>
+
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
 </html>
