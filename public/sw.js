@@ -5,7 +5,8 @@ const APP_SHELL = [
   "./icons/apple-touch-icon-180.png",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
-  "./icons/icon-1024.png"
+  "./icons/icon-1024.png",
+  "./fonts/FreckleFace-Regular.woff2",
 ];
 
 self.addEventListener("install", (event) => {
