@@ -237,6 +237,7 @@ export class GlowerTowerGame {
     jumpCount: 0,
     elapsedTime: 0,
     camLeadAngle: 0, // Smooth camera lead offset angle (ahead of player while walking)
+    verticalLead: 0, // Vertical camera lead used to offset the camera while walking and jumping
     smoothCamY: 0.5, // Smooth vertical camera target (lagging behind jump velocity changes)
     idleTimer: 0, // Seconds since the player last moved horizontally
     facingYaw: 0, // Smoothly interpolated yaw offset around vertical axis (radians)
@@ -2448,7 +2449,16 @@ waterNormals.wrapT = THREE.RepeatWrapping;
     const camOrbitTheta = theta + lead * 2;          // kamera: 2 stopnie do przodu
 
     // Spirala wznosi się o STEP_HEIGHT na każdy stopień obwodu
-    const verticalLead = (lead / stepAngle) * STEP_HEIGHT;
+    // const verticalLead = (Math.abs(lead) / stepAngle) * STEP_HEIGHT;
+
+
+this.playerState.verticalLead = THREE.MathUtils.lerp(
+  this.playerState.verticalLead,
+  isMoving && isGrounded ? STEP_HEIGHT * 0.2 : 0,
+  0.08
+);
+
+const verticalLead = this.playerState.verticalLead;
 
     // ==========================================
     // VERTICAL CAMERA LAG:
