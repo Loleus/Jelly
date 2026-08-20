@@ -119,28 +119,69 @@ export default function App() {
         });
       };
 
-      game.onGameStatusChange = (newStatus) => {
-        setPlayerState((prev) => ({ ...prev, status: newStatus }));
-        if (newStatus !== "gameover" && newStatus !== "win") return;
+      // game.onGameStatusChange = (newStatus) => {
+      //   setPlayerState((prev) => ({ ...prev, status: newStatus }));
+      //   if (newStatus !== "gameover" && newStatus !== "win") return;
 
-        const finalTime = runTimer.stop();
-        if (newStatus === "win") {
-          totalRunTimeRef.current += finalTime;
-          const ps = game.playerState;
-          const allGems = ps.gemsCollected >= ps.totalGems;
-          const updated = markLevelCompleted(
-            levelRef.current,
-            allGems,
-            ps.jumpCount,
-            finalTime,
-            TOTAL_LEVELS
-          );
-          setProgress(updated);
-          setScreen(levelRef.current >= TOTAL_LEVELS ? "gamecomplete" : "win");
-        } else {
-          setScreen("gameover");
-        }
-      };
+      //   const finalTime = runTimer.stop();
+      //   if (newStatus === "win") {
+      //     totalRunTimeRef.current += finalTime;
+      //     const ps = game.playerState;
+      //     const allGems = ps.gemsCollected >= ps.totalGems;
+      //     const updated = markLevelCompleted(
+      //       levelRef.current,
+      //       allGems,
+      //       ps.jumpCount,
+      //       finalTime,
+      //       TOTAL_LEVELS
+      //     );
+      //     setProgress(updated);
+      //     setScreen(levelRef.current >= TOTAL_LEVELS ? "gamecomplete" : "win");
+      //   } else {
+      //     setScreen("gameover");
+      //   }
+      // };
+game.onGameStatusChange = (newStatus) => {
+  setPlayerState((prev) => ({ ...prev, status: newStatus }));
+  if (newStatus !== "gameover" && newStatus !== "win") return;
+
+  const finalTime = runTimer.stop();
+
+  if (newStatus === "win") {
+    totalRunTimeRef.current += finalTime;
+
+    const ps = game.playerState;
+    const allGems = ps.gemsCollected >= ps.totalGems;
+
+    const updated = markLevelCompleted(
+      levelRef.current,
+      allGems,
+      ps.jumpCount,
+      finalTime,
+      TOTAL_LEVELS
+    );
+    setProgress(updated);
+
+    // 🔥 POPRAWIONA LOGIKA
+    if (levelRef.current >= TOTAL_LEVELS) {
+      // OSTATNI LEVEL
+      if (allGems) {
+        // Zebrano wszystkie → prawdziwy koniec gry
+        setScreen("gamecomplete");
+      } else {
+        // Brak gemów → normalny ekran "win" (VictoryModal)
+        setScreen("win");
+      }
+    } else {
+      // Normalne poziomy
+      setScreen("win");
+    }
+  } else {
+    setScreen("gameover");
+  }
+};
+
+
       return game;
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
