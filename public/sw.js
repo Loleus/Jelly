@@ -1,4 +1,4 @@
-const CACHE_NAME = "jelly-v2";
+const CACHE_NAME = "jelly-v3";
 const APP_SHELL = [
   "./",
   "./manifest.webmanifest",
@@ -7,6 +7,7 @@ const APP_SHELL = [
   "./icons/icon-512.png",
   "./icons/icon-1024.png",
   "./fonts/FreckleFace-Regular.woff2",
+  "./fonts/Yarni-Regular.woff2",
 ];
 
 self.addEventListener("install", (event) => {
