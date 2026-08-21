@@ -16,6 +16,7 @@ export interface Translation {
   fullscreen: string;
   langPl: string;
   langEn: string;
+  menuCredits: string;
 
   // Level select
   selectLevel: string;
@@ -125,9 +126,9 @@ export const translations: Record<Lang, Translation> = {
     appName: "Glut Żelek",
     appSubtitle: "Wieża",
     pageTitle: "Glut Żelek: Wieża",
-
     menuPlay: "GRAJ",
     menuPlayAria: "Graj",
+    menuCredits: "(c) LUKAMI 2026",
     unmute: "Włącz dźwięk",
     mute: "Wycisz dźwięk",
     settings: "Ustawienia",
@@ -240,6 +241,7 @@ export const translations: Record<Lang, Translation> = {
 
     menuPlay: "PLAY",
     menuPlayAria: "Play",
+    menuCredits: "(c) LUKAMI 2026",
     unmute: "Unmute",
     mute: "Mute",
     settings: "Settings",

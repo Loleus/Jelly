@@ -48,8 +48,26 @@
       font-style: normal;
     }
 
+    @font-face {
+      font-family: "Yarni";
+      src: url("/fonts/Yarin-Regular.woff2") format("woff2");
+      font-weight: 800;
+      font-style: normal;
+    }
+
     .font-freckle {
       font-family: "Freckle Face", ui-serif, Georgia, serif;
+    }
+
+    .font-yarni {
+      font-family: "Yarni", ui-serif, Georgia, serif;
+    }
+    .logo {
+      font-family: "Yarni", ui-serif, Georgia, serif;
+      font-size: 3rem;
+      color: #9af;
+      text-shadow: 0 0 5px #9af, 0 0 20px #9af, 0 0 30px #9af, 0 0 40px #9af;
+      margin-bottom: 1rem;
     }
 
     #loader {
@@ -116,8 +134,9 @@
 
 <body>
   <div id="loader">
+    <div class="logo">LUKAMI</div>
     <div class="spinner"></div>
-    <div class="loader-text">Ładowanie...</div>
+    <div class="loader-text">Loading...</div>
   </div>
 
   <div id="root"></div>

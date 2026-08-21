@@ -138,45 +138,45 @@ export default function App() {
       //     setScreen("gameover");
       //   }
       // };
-game.onGameStatusChange = (newStatus) => {
-  setPlayerState((prev) => ({ ...prev, status: newStatus }));
-  if (newStatus !== "gameover" && newStatus !== "win") return;
+      game.onGameStatusChange = (newStatus) => {
+        setPlayerState((prev) => ({ ...prev, status: newStatus }));
+        if (newStatus !== "gameover" && newStatus !== "win") return;
 
-  const finalTime = runTimer.stop();
+        const finalTime = runTimer.stop();
 
-  if (newStatus === "win") {
-    totalRunTimeRef.current += finalTime;
+        if (newStatus === "win") {
+          totalRunTimeRef.current += finalTime;
 
-    const ps = game.playerState;
-    const allGems = ps.gemsCollected >= ps.totalGems;
+          const ps = game.playerState;
+          const allGems = ps.gemsCollected >= ps.totalGems;
 
-    const updated = markLevelCompleted(
-      levelRef.current,
-      allGems,
-      ps.jumpCount,
-      finalTime,
-      TOTAL_LEVELS
-    );
-    setProgress(updated);
+          const updated = markLevelCompleted(
+            levelRef.current,
+            allGems,
+            ps.jumpCount,
+            finalTime,
+            TOTAL_LEVELS
+          );
+          setProgress(updated);
 
-    // 🔥 POPRAWIONA LOGIKA
-    if (levelRef.current >= TOTAL_LEVELS) {
-      // OSTATNI LEVEL
-      if (allGems) {
-        // Zebrano wszystkie → prawdziwy koniec gry
-        setScreen("gamecomplete");
-      } else {
-        // Brak gemów → normalny ekran "win" (VictoryModal)
-        setScreen("win");
-      }
-    } else {
-      // Normalne poziomy
-      setScreen("win");
-    }
-  } else {
-    setScreen("gameover");
-  }
-};
+          // 🔥 POPRAWIONA LOGIKA
+          if (levelRef.current >= TOTAL_LEVELS) {
+            // OSTATNI LEVEL
+            if (allGems) {
+              // Zebrano wszystkie → prawdziwy koniec gry
+              setScreen("gamecomplete");
+            } else {
+              // Brak gemów → normalny ekran "win" (VictoryModal)
+              setScreen("win");
+            }
+          } else {
+            // Normalne poziomy
+            setScreen("win");
+          }
+        } else {
+          setScreen("gameover");
+        }
+      };
 
 
       return game;
@@ -248,12 +248,14 @@ game.onGameStatusChange = (newStatus) => {
   useEffect(() => {
     gameRef.current?.setRenderResolution(resolution.width, resolution.height);
   }, [resolution]);
-useEffect(() => {
-  if (screen === "menu") {
-    const loader = document.getElementById("loader");
-    if (loader) loader.style.display = "none";
-  }
-}, [screen]);
+
+  useEffect(() => {
+    if (screen === "menu") {
+      const loader = document.getElementById("loader");
+      if (loader) loader.style.display = "none";
+    }
+  }, [screen]);
+  
   // ── Handlers ─────────────────────────────────────────────────────────────
   const handleConfigChange = useCallback(
     (newConfig: Partial<EngineConfig>) => {
@@ -365,9 +367,8 @@ useEffect(() => {
   return (
     <main className="relative flex h-screen w-screen flex-col items-center justify-center overflow-hidden bg-[#050b14] font-freckle text-slate-100 select-none">
       <div
-        className={`relative overflow-hidden transition-all duration-700 ${
-          config.filterMode === "crt" ? "crt-overlay" : ""
-        } `}
+        className={`relative overflow-hidden transition-all duration-700 ${config.filterMode === "crt" ? "crt-overlay" : ""
+          } `}
         style={{
           width: "100vw",
           height: "100vh",
@@ -376,9 +377,8 @@ useEffect(() => {
       >
         <div
           ref={mountRef}
-          className={`absolute inset-0 transition-all duration-700 ${
-            config.filterMode === "crisp" ? "rendering-pixelated" : ""
-          }`}
+          className={`absolute inset-0 transition-all duration-700 ${config.filterMode === "crisp" ? "rendering-pixelated" : ""
+            }`}
           style={{ display: "flex", alignItems: "center", justifyContent: "center" }}
         />
       </div>
