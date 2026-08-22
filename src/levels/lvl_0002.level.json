@@ -61,7 +61,7 @@
     { "id": "gem-12", "x": 1.5,  "y": 43.8}
   ],
   "springs": [
-    { "id": "spring-low",  "x": 7,  "topY": 4.5,  "bounceForce": 18.5 },
+    { "id": "spring-low",  "x": 9,  "topY": 4.5,  "bounceForce": 18.5 },
     { "id": "spring-high", "x": 23, "topY": 41.5, "bounceForce": 18.5 }
   ],
   "enemies": [
