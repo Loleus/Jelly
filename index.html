@@ -143,7 +143,10 @@
 <script>
   window.__fontsLoaded = false;
 
-  document.fonts.ready.then(() => {
+  Promise.all([
+    document.fonts.load("20px Freckle Face"),
+    document.fonts.load("20px Yarin")
+  ]).then(() => {
     window.__fontsLoaded = true;
   });
 </script>

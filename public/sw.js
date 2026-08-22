@@ -1,4 +1,4 @@
-const CACHE_NAME = "jelly-v5";
+const CACHE_NAME = "jelly-v6";
 const APP_SHELL = [
   "./",
   "./manifest.webmanifest",
