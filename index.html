@@ -49,7 +49,7 @@
     }
 
     @font-face {
-      font-family: "Yarni";
+      font-family: "Yarin";
       src: url("/fonts/Yarin-Regular.woff2") format("woff2");
       font-weight: 800;
       font-style: normal;
@@ -59,11 +59,11 @@
       font-family: "Freckle Face", ui-serif, Georgia, serif;
     }
 
-    .font-yarni {
-      font-family: "Yarni", ui-serif, Georgia, serif;
+    .font-yarin {
+      font-family: "Yarin", ui-serif, Georgia, serif;
     }
     .logo {
-      font-family: "Yarni", ui-serif, Georgia, serif;
+      font-family: "Yarin", ui-serif, Georgia, serif;
       font-size: 3rem;
       color: #9af;
       text-shadow: 0 0 5px #9af, 0 0 20px #9af, 0 0 30px #9af, 0 0 40px #9af;
@@ -140,7 +140,18 @@
   </div>
 
   <div id="root"></div>
-  <script type="module" src="/src/main.tsx"></script>
+  <script>
+  // Czekamy aż wszystkie fonty z @font-face zostaną załadowane
+  document.fonts.ready.then(() => {
+    // Dopiero teraz uruchamiamy React
+    const script = document.createElement("script");
+    script.type = "module";
+    script.src = "/src/main.tsx";
+    document.body.appendChild(script);
+  });
+</script>
+
+  <!-- <script type="module" src="/src/main.tsx"></script> -->
 </body>
 
 </html>
