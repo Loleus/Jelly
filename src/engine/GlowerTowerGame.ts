@@ -459,8 +459,7 @@ export class GlowerTowerGame {
     // Woda – dokładnie jak w three.js ocean example
 const textureLoader = new THREE.TextureLoader();
 
-const waterNormalsUrl = new URL("../textures/waternormals.jpg", import.meta.url).href;
-
+const waterNormalsUrl = "/textures/waternormals.jpg";
 const waterNormals = textureLoader.load(waterNormalsUrl);
 waterNormals.wrapS = THREE.RepeatWrapping;
 waterNormals.wrapT = THREE.RepeatWrapping;

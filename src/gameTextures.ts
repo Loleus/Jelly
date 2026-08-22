@@ -41,8 +41,8 @@ export function createElevatorRailMaterial(): THREE.MeshStandardMaterial {
 export function createDoorMaterial(): THREE.MeshStandardMaterial {
   const textureLoader = new THREE.TextureLoader();
 
-  const liftColorUrl = new URL("./textures/door/door_col.jpg", import.meta.url).href;
-  const liftNormalUrl = new URL("./textures/door/door_nrm.jpg", import.meta.url).href;
+  const liftColorUrl = "/textures/door/door_col.jpg";
+  const liftNormalUrl = "/textures/door/door_nrm.jpg";
 
   const colorTexture = configureColorMap(textureLoader.load(liftColorUrl));
   const normalTexture = configureNormalMap(textureLoader.load(liftNormalUrl));
@@ -59,8 +59,8 @@ export function createDoorMaterial(): THREE.MeshStandardMaterial {
 export function createDoorFrameMaterial(): THREE.MeshStandardMaterial {
   const textureLoader = new THREE.TextureLoader();
 
-  const liftColorUrl = new URL("./textures/step/STEP_col.jpg", import.meta.url).href;
-  const liftNormalUrl = new URL("./textures/step/STEP_nrm.jpg", import.meta.url).href;
+  const liftColorUrl = "/textures/step/STEP_col.jpg";
+  const liftNormalUrl = "/textures/step/STEP_nrm.jpg";
 
   const repeat: [number, number] = [0.5, 0.9];
 
@@ -70,12 +70,14 @@ export function createDoorFrameMaterial(): THREE.MeshStandardMaterial {
     repeat,
     anisotropy: 7,
   });
+
   const normalTexture = configureNormalMap(textureLoader.load(liftNormalUrl), {
     wrapS: THREE.RepeatWrapping,
     wrapT: THREE.RepeatWrapping,
     repeat,
     anisotropy: 7,
   });
+
   return new THREE.MeshStandardMaterial({
     map: texture,
     normalMap: normalTexture,
@@ -92,8 +94,8 @@ export function createTowerMaterial(
 ): THREE.Material {
   const textureLoader = loader ?? new THREE.TextureLoader();
 
-  const wallColorTextureUrl = new URL("./textures/wall/WALL_col.jpg", import.meta.url).href;
-  const wallNormalTextureUrl = new URL("./textures/wall/WALL_nrm.jpg", import.meta.url).href;
+  const wallColorTextureUrl = "/textures/wall/WALL_col.jpg";
+  const wallNormalTextureUrl = "/textures/wall/WALL_nrm.jpg";
 
   const repeatU = 7;
   const repeatV = Math.max(1, Math.ceil((_height || 52) / 6));
@@ -105,6 +107,7 @@ export function createTowerMaterial(
     repeat,
     anisotropy: 7,
   });
+
   const normalTexture = configureNormalMap(textureLoader.load(wallNormalTextureUrl), {
     wrapS: THREE.RepeatWrapping,
     wrapT: THREE.RepeatWrapping,
@@ -126,8 +129,8 @@ export function createTowerMaterial(
 export function createStairsMaterial(loader?: THREE.TextureLoader): THREE.Material {
   const textureLoader = loader || new THREE.TextureLoader();
 
-  const stepColorUrl = new URL("./textures/step/STEP_col.jpg", import.meta.url).href;
-  const stepNormalUrl = new URL("./textures/step/STEP_nrm.jpg", import.meta.url).href;
+  const stepColorUrl = "/textures/step/STEP_col.jpg";
+  const stepNormalUrl = "/textures/step/STEP_nrm.jpg";
 
   const colorTexture = configureColorMap(textureLoader.load(stepColorUrl));
   const normalTexture = configureNormalMap(textureLoader.load(stepNormalUrl));
@@ -146,8 +149,8 @@ export function createStairsMaterial(loader?: THREE.TextureLoader): THREE.Materi
 export function createElevatorMaterial(): THREE.MeshStandardMaterial {
   const textureLoader = new THREE.TextureLoader();
 
-  const liftColorUrl = new URL("./textures/lift/STEP_col.png", import.meta.url).href;
-  const liftNormalUrl = new URL("./textures/lift/STEP_nrm.png", import.meta.url).href;
+  const liftColorUrl = "/textures/lift/STEP_col.png";
+  const liftNormalUrl = "/textures/lift/STEP_nrm.png";
 
   const colorTexture = configureColorMap(textureLoader.load(liftColorUrl));
   const normalTexture = configureNormalMap(textureLoader.load(liftNormalUrl));
@@ -161,14 +164,13 @@ export function createElevatorMaterial(): THREE.MeshStandardMaterial {
   });
 }
 
-
 // --- ENEMY MATERIAL ----------------------------------------------------------
 
 export function createEnemyMaterial(): THREE.MeshStandardMaterial {
   const textureLoader = new THREE.TextureLoader();
 
-  const enemyColorUrl = new URL("./textures/enemy/ENEMY_col.jpg", import.meta.url).href;
-  const enemyNormalUrl = new URL("./textures/enemy/ENEMY_nrm.jpg", import.meta.url).href;
+  const enemyColorUrl = "/textures/enemy/ENEMY_col.jpg";
+  const enemyNormalUrl = "/textures/enemy/ENEMY_nrm.jpg";
 
   const colorTexture = textureLoader.load(enemyColorUrl);
   const normalTexture = textureLoader.load(enemyNormalUrl);
@@ -187,13 +189,13 @@ export function createEnemyMaterial(): THREE.MeshStandardMaterial {
   });
 }
 
-// --- DOOR FRAME ----------------------------------------------------------
+// --- COLLAPSING STAIR ----------------------------------------------------------
 
 export function createCollapsingStairMaterial(): THREE.MeshStandardMaterial {
   const textureLoader = new THREE.TextureLoader();
 
-  const colUrl = new URL("./textures/collapse/STEP_col.jpg", import.meta.url).href;
-  const nrmUrl = new URL("./textures/collapse/STEP_nrm.jpg", import.meta.url).href;
+  const colUrl = "/textures/collapse/STEP_col.jpg";
+  const nrmUrl = "/textures/collapse/STEP_nrm.jpg";
 
   const map = configureColorMap(textureLoader.load(colUrl));
   const normalMap = configureNormalMap(textureLoader.load(nrmUrl));
@@ -206,11 +208,14 @@ export function createCollapsingStairMaterial(): THREE.MeshStandardMaterial {
     metalness: 0.2,
   });
 }
+
+// --- TOGGLABLE STAIR ----------------------------------------------------------
+
 export function createTogglableStairMaterial(): THREE.MeshStandardMaterial {
   const textureLoader = new THREE.TextureLoader();
 
-  const colUrl = new URL("./textures/step/STEP_col.jpg", import.meta.url).href;
-  const nrmUrl = new URL("./textures/step/STEP_nrm.jpg", import.meta.url).href;
+  const colUrl = "/textures/step/STEP_col.jpg";
+  const nrmUrl = "/textures/step/STEP_nrm.jpg";
 
   const map = configureColorMap(textureLoader.load(colUrl));
   const normalMap = configureNormalMap(textureLoader.load(nrmUrl));
@@ -223,4 +228,3 @@ export function createTogglableStairMaterial(): THREE.MeshStandardMaterial {
     metalness: 0.2,
   });
 }
-
