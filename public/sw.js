@@ -1,36 +1,39 @@
-const CACHE_NAME = "jelly-v6";
-const APP_SHELL = [
-  "./",
-  "./manifest.webmanifest",
-  "./icons/apple-touch-icon-180.png",
-  "./icons/icon-192.png",
-  "./icons/icon-512.png",
-  "./icons/icon-1024.png",
-  "./fonts/FreckleFace-Regular.woff2",
-  "./fonts/Yarin-Regular.woff2",
-];
+const CACHE_NAME = "glut=1";
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)));
+  event.waitUntil(
+    (async () => {
+      const cache = await caches.open(CACHE_NAME);
+
+      // pobierz listę WSZYSTKICH plików wygenerowaną przez Vite plugin
+      const files = await fetch("./sw-files.json").then((r) => r.json());
+
+      // dodaj prefix "./"
+      const urls = files.map((f) => "." + f);
+
+      await cache.addAll(urls);
+    })()
+  );
+
   self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches
-      .keys()
-      .then((keys) => Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))))
+    caches.keys().then((keys) =>
+      Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)))
+    )
   );
   self.clients.claim();
 });
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
+
   event.respondWith(
     fetch(event.request)
       .then((response) => {
-        const clone = response.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, response.clone()));
         return response;
       })
       .catch(() => caches.match(event.request).then((cached) => cached || caches.match("./")))
