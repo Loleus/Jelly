@@ -192,8 +192,8 @@ export function createEnemyMaterial(): THREE.MeshStandardMaterial {
 export function createCollapsingStairMaterial(): THREE.MeshStandardMaterial {
   const textureLoader = new THREE.TextureLoader();
 
-  const colUrl = new URL("./textures/collapse/STEP_col.png", import.meta.url).href;
-  const nrmUrl = new URL("./textures/collapse/STEP_nrm.png", import.meta.url).href;
+  const colUrl = new URL("./textures/collapse/STEP_col.jpg", import.meta.url).href;
+  const nrmUrl = new URL("./textures/collapse/STEP_nrm.jpg", import.meta.url).href;
 
   const map = configureColorMap(textureLoader.load(colUrl));
   const normalMap = configureNormalMap(textureLoader.load(nrmUrl));
