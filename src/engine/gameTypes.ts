@@ -114,3 +114,11 @@ export interface Checkpoint {
   activated: boolean;
   mesh?: THREE.Mesh;
 }
+
+declare global {
+  interface Window {
+    __fontsLoaded: boolean;
+  }
+}
+
+export {};

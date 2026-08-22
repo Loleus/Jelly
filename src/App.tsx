@@ -249,12 +249,13 @@ export default function App() {
     gameRef.current?.setRenderResolution(resolution.width, resolution.height);
   }, [resolution]);
 
-  useEffect(() => {
-    if (screen === "menu") {
-      const loader = document.getElementById("loader");
-      if (loader) loader.style.display = "none";
-    }
-  }, [screen]);
+useEffect(() => {
+  if (screen === "menu" && window.__fontsLoaded) {
+    const loader = document.getElementById("loader");
+    if (loader) loader.style.display = "none";
+  }
+}, [screen]);
+
   
   // ── Handlers ─────────────────────────────────────────────────────────────
   const handleConfigChange = useCallback(
