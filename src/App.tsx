@@ -250,11 +250,21 @@ export default function App() {
   }, [resolution]);
 
 useEffect(() => {
-  if (screen === "menu" && window.__fontsLoaded) {
-    const loader = document.getElementById("loader");
+  const loader = document.getElementById("loader");
+
+  // Fallback: jeśli SW serwuje starą wersję, loader musi zniknąć po 3 sekundach
+  const fallback = setTimeout(() => {
     if (loader) loader.style.display = "none";
+  }, 3000);
+
+  if (screen === "menu" && window.__fontsLoaded) {
+    if (loader) loader.style.display = "none";
+    clearTimeout(fallback);
   }
+
+  return () => clearTimeout(fallback);
 }, [screen]);
+
 
   
   // ── Handlers ─────────────────────────────────────────────────────────────

@@ -140,8 +140,9 @@
   </div>
 
   <div id="root"></div>
-  <script>
-  // Czekamy na fonty zanim pozwolimy Reactowi schować loader
+<script>
+  window.__fontsLoaded = false;
+
   document.fonts.ready.then(() => {
     window.__fontsLoaded = true;
   });
