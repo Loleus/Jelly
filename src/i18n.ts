@@ -128,7 +128,7 @@ export const translations: Record<Lang, Translation> = {
     pageTitle: "Glut Żelek: Wieża",
     menuPlay: "GRAJ",
     menuPlayAria: "Graj",
-    menuCredits: "(c) LUKAMI 2026",
+    menuCredits: "© LUKAMI 2026",
     unmute: "Włącz dźwięk",
     mute: "Wycisz dźwięk",
     settings: "Ustawienia",
@@ -241,7 +241,7 @@ export const translations: Record<Lang, Translation> = {
 
     menuPlay: "PLAY",
     menuPlayAria: "Play",
-    menuCredits: "(c) LUKAMI 2026",
+    menuCredits: "© LUKAMI 2026",
     unmute: "Unmute",
     mute: "Mute",
     settings: "Settings",

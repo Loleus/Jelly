@@ -69,7 +69,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
           {t.menuPlay}
         </span>
       </div>
-      <span className="pointer-events-auto  text-xl absolute bottom-5 left-1/2 -translate-x-1/2 text-center z-index:1000 text-[#4ade80] drop-shadow-[0_3px_12px_rgba(0,0,0,0.9)] [@media(max-height:500px)]:bottom-1 [@media(max-height:500px)]:text-xs">
+      <span className="font-yarin pointer-events-auto  text-xl absolute bottom-5 left-1/2 -translate-x-1/2 text-center z-index:1000 text-[#9aa] drop-shadow-[0_3px_12px_rgba(0,0,0,0.9)] [@media(max-height:500px)]:bottom-1 [@media(max-height:500px)]:text-xs">
         <a href="https://loleus.github.io" target="_blank" rel="noopener noreferrer" className="display:block hover:cursor-pointer z-index:1000">
           {t.menuCredits}
         </a>
